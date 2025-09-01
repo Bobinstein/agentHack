@@ -1,5 +1,5 @@
 /**
- * AgentHack - Add Portfolio Utility
+ * AgentHack - get everything Utility
  * Copyright (C) 2024  Stephen
  *
  * This program is free software: you can redistribute it and/or modify
