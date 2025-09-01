@@ -1,5 +1,5 @@
 /**
- * AgentHack - Set Note Utility
+ * AgentHack - Add Portfolio Utility
  * Copyright (C) 2024  Stephen
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ const {
   message,
   result,
   createDataItemSigner,
+  dryrun
 } = require("@permaweb/aoconnect");
 const fs = require("fs");
 
@@ -36,14 +37,14 @@ const walletPath = process.env.WALLET_PATH.replace(
 const jwk = JSON.parse(fs.readFileSync(walletPath));
 
 async function main() {
-  const txId = await message({
+  const txId = await dryrun({
     process: processId,
     tags: [
-      { name: "Action", value: "Set-note" },
-      { name: "Note", value: "This is a test note" },
+      { name: "Action", value: "get-daily-summary" },
+
     ],
-    signer: createDataItemSigner(jwk),
-    data: "The note is only set from data, not the note tag.",
+    // signer: createDataItemSigner(jwk),
+    data: "Get Complete Data Dump",
   });
 
   console.log(txId);

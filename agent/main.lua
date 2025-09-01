@@ -1,3 +1,21 @@
+--[[
+  AgentHack - Main Agent Process
+  Copyright (C) 2024  Stephen
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+--]]
+
 local json = require("json")
 require("calendar")
 require("weather")
@@ -347,6 +365,306 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
         end
     end
 end
+
+--[[
+    Handler for getting complete, unfiltered data from all modules.
+    Returns ALL data that would normally be included in the daily email:
+    - Complete note data
+    - Full token portfolio and all balances
+    - Entire calendar with all events (not just today's)
+    - Complete weather cache data
+    - All distribution data
+    - Complete token price data
+    - Full system information
+--]]
+Handlers.add("get-daily-summary",
+    Handlers.utils.hasMatchingTag("Action", "get-daily-summary"),
+    function(msg)
+        -- if not msg.From == Owner then
+        --     print("❌ Error: Unauthorized daily summary request")
+        --     return
+        -- end
+
+        print("📊 Generating complete, unfiltered data dump...")
+
+        -- Get current date for context
+        local currentTime = os.time()
+        local currentTimestamp = currentTime
+
+        -- Use timezone-aware functions from calendar.lua if available
+        local currentLocalTime = getCurrentLocalTimestamp and getCurrentLocalTimestamp(msg) or currentTimestamp
+        local currentDate = timestampToDate and timestampToDate(currentLocalTime) or nil
+        local dayStartMs, dayEndMs, today
+
+        if not currentDate then
+            -- Fallback: use simple day boundary calculation
+            dayStartMs = currentTimestamp - (currentTimestamp % 86400000)
+            dayEndMs = dayStartMs + 86400000
+            today = "today"
+        else
+            -- Use the calendar.lua conversion functions with timezone awareness
+            local dayStart = dateToTimestamp and
+                dateToTimestamp(currentDate.year, currentDate.month, currentDate.day, 0, 0, 0) or nil
+            local dayEnd = dayStart and (dayStart + 86400000) or nil
+
+            if dayStart and dayEnd then
+                dayStartMs = dayStart
+                dayEndMs = dayEnd
+                today = currentDate.month .. "/" .. currentDate.day .. "/" .. currentDate.year
+            else
+                -- Fallback if calendar functions fail
+                dayStartMs = currentTimestamp - (currentTimestamp % 86400000)
+                dayEndMs = dayStartMs + 86400000
+                today = "today"
+            end
+        end
+
+        -- Helper function to safely convert Lua tables to JSON-safe format
+        local function sanitizeTable(tbl)
+            if type(tbl) ~= "table" then
+                return tbl
+            end
+
+            local sanitized = {}
+            for k, v in pairs(tbl) do
+                -- Convert numeric keys to strings for JSON compatibility
+                local safeKey = type(k) == "number" and tostring(k) or k
+
+                if type(v) == "table" then
+                    sanitized[safeKey] = sanitizeTable(v)
+                else
+                    -- Ensure values are JSON-safe
+                    if type(v) == "number" and (v ~= v or v == math.huge or v == -math.huge) then
+                        sanitized[safeKey] = 0 -- Handle NaN/infinity
+                    else
+                        sanitized[safeKey] = v
+                    end
+                end
+            end
+            return sanitized
+        end
+
+        -- Gather ALL data unfiltered
+        local completeData = {
+            date = today,
+            timestamp = currentTimestamp,
+            localTimestamp = currentLocalTime,
+            timezone = calendar and calendar.timezone or "UTC",
+            generatedAt = os.time(),
+            requestType = "complete-unfiltered-data"
+        }
+
+        -- 1. Complete Note Data
+        if getNote then
+            completeData.note = getNote()
+        else
+            completeData.note = Note or ""
+        end
+
+        -- 2. Complete Token Portfolio (ALL data)
+        if TokenPortfolio then
+            completeData.portfolio = {}
+
+            -- Get ALL token balances unfiltered
+            if getTokenBalances then
+                local tokenBalances = getTokenBalances()
+                completeData.portfolio.balances = sanitizeTable(tokenBalances)
+
+                -- Include raw portfolio data as well (sanitized)
+                completeData.portfolio.rawPortfolio = sanitizeTable(TokenPortfolio)
+
+                -- Calculate total portfolio value if prices are available
+                local totalPortfolioValue = 0
+                local portfolioItems = 0
+
+                for ticker, balanceData in pairs(tokenBalances) do
+                    if balanceData.parsed and balanceData.parsed > 0 then
+                        portfolioItems = portfolioItems + 1
+                        local tokenPrice = TokenPrices and TokenPrices[ticker] and TokenPrices[ticker].price
+
+                        if tokenPrice then
+                            local usdValue = balanceData.parsed * tokenPrice
+                            totalPortfolioValue = totalPortfolioValue + usdValue
+                        end
+                    end
+                end
+
+                completeData.portfolio.totalValue = totalPortfolioValue
+                completeData.portfolio.itemCount = portfolioItems
+            end
+        end
+
+        -- 3. Complete Distribution Data (ALL distributions)
+        if LastDist then
+            completeData.distributions = {}
+
+            -- Include ALL distribution data unfiltered
+            for tokenType, distData in pairs(LastDist) do
+                if type(tokenType) == "string" then -- Only process string keys
+                    completeData.distributions[tokenType] = {
+                        raw = distData["raw"],
+                        parsed = distData["parsed"],
+                        lastUpdated = distData["LastUpdated"],
+                        usdValue = TokenPrices and TokenPrices[tokenType] and TokenPrices[tokenType].price and
+                            (distData["parsed"] * TokenPrices[tokenType].price) or nil,
+                        -- Include any other fields that might exist (sanitized)
+                        allData = sanitizeTable(distData)
+                    }
+                end
+            end
+        end
+
+        -- 4. Complete Calendar Data (ALL events, not just today's)
+        completeData.calendar = {}
+        if calendar then
+            -- Include the entire calendar module data (sanitized)
+            completeData.calendar.moduleData = sanitizeTable(calendar)
+
+            if calendar.events then
+                local allEvents = calendar.events
+                local totalEvents = 0
+                local todayEvents = {}
+                local allEventsList = {}
+
+                -- Process ALL events unfiltered
+                for id, event in pairs(allEvents) do
+                    if type(id) == "string" then -- Only process string keys
+                        totalEvents = totalEvents + 1
+                        table.insert(allEventsList, sanitizeTable(event))
+
+                        -- Also identify today's events for reference
+                        if isToday and isToday(event.startTime, currentLocalTime) then
+                            table.insert(todayEvents, sanitizeTable(event))
+                        else
+                            -- Fallback: manual timestamp comparison
+                            local eventStartMs = event.startTime
+                            if eventStartMs >= dayStartMs and eventStartMs < dayEndMs then
+                                table.insert(todayEvents, sanitizeTable(event))
+                            end
+                        end
+                    end
+                end
+
+                completeData.calendar.totalEvents = totalEvents
+                completeData.calendar.todayEvents = todayEvents
+                completeData.calendar.eventCount = #todayEvents
+                completeData.calendar.allEvents = allEventsList
+                completeData.calendar.rawEvents = sanitizeTable(allEvents)
+            end
+
+            -- Include any other calendar module data
+            if calendar.timezone then
+                completeData.calendar.timezone = calendar.timezone
+            end
+        end
+
+        -- 5. Complete Weather Data (ALL cache data)
+        completeData.weather = {}
+        local defaultLocation = "Little France, NY"
+
+        if weather then
+            defaultLocation = weather.defaultLocation or "Little France, NY"
+            completeData.weather.location = defaultLocation
+            completeData.weather.moduleData = sanitizeTable(weather)
+
+            -- Access the COMPLETE weather cache data
+            if weatherCache then
+                -- Include the entire weather cache structure (sanitized)
+                completeData.weather.completeCache = sanitizeTable(weatherCache)
+
+                -- Check for current weather cache
+                local currentCacheKey = defaultLocation .. "_current"
+                if weatherCache.current and weatherCache.current[currentCacheKey] then
+                    local currentWeather = weatherCache.current[currentCacheKey]
+                    completeData.weather.current = sanitizeTable(currentWeather)
+                else
+                    completeData.weather.current = { error = "Weather data not available" }
+                end
+
+                -- Check for daily forecast cache
+                local dailyCacheKey = defaultLocation .. "_daily"
+                if weatherCache.daily and weatherCache.daily[dailyCacheKey] then
+                    local dailyForecast = weatherCache.daily[dailyCacheKey]
+                    completeData.weather.daily = sanitizeTable(dailyForecast)
+                else
+                    completeData.weather.daily = { error = "Forecast data not available" }
+                end
+
+                -- Include all cache keys and their last updated times (sanitized)
+                if weatherCache.lastUpdated then
+                    completeData.weather.cacheTimestamps = sanitizeTable(weatherCache.lastUpdated)
+                end
+            else
+                completeData.weather.current = { error = "Weather cache not accessible" }
+                completeData.weather.daily = { error = "Weather cache not accessible" }
+            end
+        else
+            completeData.weather.current = { error = "Weather configuration not accessible" }
+            completeData.weather.daily = { error = "Weather configuration not accessible" }
+        end
+
+        -- 6. Complete Token Prices (ALL price data)
+        if TokenPrices then
+            completeData.tokenPrices = {}
+            for ticker, priceData in pairs(TokenPrices) do
+                if type(ticker) == "string" then -- Only process string keys
+                    completeData.tokenPrices[ticker] = {
+                        price = priceData.price,
+                        lastUpdated = priceData.lastUpdated,
+                        change24h = priceData.change24h,
+                        -- Include any other price data fields (sanitized)
+                        allData = sanitizeTable(priceData)
+                    }
+                end
+            end
+        end
+
+        -- 7. Complete System Information
+        completeData.system = {
+            owner = Owner,
+            processId = ao.id,
+            uptime = os.time() - (ao.loadTime or os.time()),
+            memoryUsage = "Available", -- AO processes don't have traditional memory limits
+            lastCronRun = "N/A",       -- Could be enhanced to track actual cron execution times
+            loadTime = ao.loadTime,
+            processInfo = {
+                id = ao.id,
+                owner = Owner,
+                timestamp = currentTimestamp
+            }
+        }
+
+        -- 8. Include any other global variables or state
+        completeData.globals = {
+            -- Include any other global variables that might be useful
+            hasCalendar = calendar ~= nil,
+            hasWeather = weather ~= nil,
+            hasWeatherCache = weatherCache ~= nil,
+            hasTokenPortfolio = TokenPortfolio ~= nil,
+            hasLastDist = LastDist ~= nil,
+            hasTokenPrices = TokenPrices ~= nil
+        }
+
+        -- Sanitize the entire data structure before JSON encoding
+        local sanitizedData = sanitizeTable(completeData)
+
+        -- Send the complete, unfiltered data back to the requestor
+        ao.send({
+            Target = msg.From,
+            Action = "daily-summary-response",
+            Data = json.encode(sanitizedData),
+            ["Summary-Date"] = today,
+            ["Generated-At"] = tostring(os.time()),
+            ["Data-Type"] = "complete-unfiltered-data",
+            ["Data-Size"] = tostring(#json.encode(sanitizedData)),
+            Status = "success"
+        })
+
+        print("📊 Complete, unfiltered data sent to: " .. msg.From)
+        print(
+            "📊 Data includes: ALL notes, ALL portfolio data, ALL calendar events, ALL weather cache, ALL distributions, ALL token prices, ALL system info")
+    end
+)
 
 --[[
     Handler for relay response status messages.

@@ -2,9 +2,10 @@
   "name": "agentHack",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "dependencies": {
     "@permaweb/aoconnect": "^0.0.89",
-    "axios": "^1.11.0"
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1"
   }
 }

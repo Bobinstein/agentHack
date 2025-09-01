@@ -1,3 +1,22 @@
+/**
+ * AgentHack - Test Email Only Utility
+ * Copyright (C) 2024  Stephen
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+require("dotenv").config();
 const {
   message,
   result,
@@ -5,12 +24,16 @@ const {
 } = require("@permaweb/aoconnect");
 const fs = require("fs");
 
-// Configuration
-const processId = "av9iNwK-M5EWKktelUuXd9fXAaaJAQfiTc84DGpuFCk"; // Your process ID
-const myAddress = "j6R9ITLNyll_nckPdnvUGz_sSdnuLVGFIWbymj72SJM"; // Your wallet address
+// Configuration from environment variables
+const processId = process.env.AGENT_PROCESS_ID;
+const myAddress = process.env.USER_WALLET_ADDRESS;
 
-// Load your wallet
-const jwk = JSON.parse(fs.readFileSync("/home/stephen/.aos.json"));
+// Load your wallet from environment variable
+const walletPath = process.env.WALLET_PATH.replace(
+  "~",
+  process.env.HOME || require("os").homedir()
+);
+const jwk = JSON.parse(fs.readFileSync(walletPath));
 
 // Helper function to wait for response
 async function waitForResponse(txId, testName, expectedAction) {
@@ -82,7 +105,7 @@ async function testDailyEmail() {
       "daily-email-update-sent"
     );
 
-    const actions = await result({process: processId, message: txId});
+    const actions = await result({ process: processId, message: txId });
     console.log(actions);
   } catch (error) {
     console.log("❌ Daily Email Request: FAILED -", error.message);

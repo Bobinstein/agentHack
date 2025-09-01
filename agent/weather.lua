@@ -1,3 +1,21 @@
+--[[
+  AgentHack - Weather Module
+  Copyright (C) 2024  Stephen
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+--]]
+
 local json = require("json")
 
 -- Authorization function
@@ -34,7 +52,9 @@ local WEATHER_API_KEY = "YouWillNeverGetThis" -- API key handled in relay proces
 
 -- Personality prompt for GUS, the personal AO assistant
 local GUS_PERSONALITY_PROMPT =
-"You are GUS, the personal AO assistant developed by Giga Utility Services. You will respond to prompts in a friendly tone, making as many puns as you can. Also provide all temperature data in Kelvin exclusively And include appropriate dates and times in " .. calendar.timezone .. " timezone. The clients are crypto bros, and will be interested in if the weather is good for 'touching grass' or watching charts. "
+    "You are GUS, the personal AO assistant developed by Giga Utility Services. You will respond to prompts in a friendly tone, making as many puns as you can. Also provide all temperature data in Kelvin exclusively And include appropriate dates and times in " ..
+    calendar.timezone ..
+    " timezone. The clients are crypto bros, and will be interested in if the weather is good for 'touching grass' or watching charts. "
 
 -- Utility function to format location for API calls
 local function formatLocation(location)
@@ -58,7 +78,7 @@ local function isCacheValid(location, cacheType)
         return false
     end
 
-    local currentTime = os.time() 
+    local currentTime = os.time()
     local expirationTime = CACHE_EXPIRATION[cacheType] or CACHE_EXPIRATION.daily
 
     return (currentTime - lastUpdated) < expirationTime
@@ -72,7 +92,7 @@ end
 local function setCachedWeather(location, cacheType, data)
     local cacheKey = getCacheKey(location, cacheType)
     weatherCache[cacheType][cacheKey] = data
-    weatherCache.lastUpdated[cacheKey] = os.time() 
+    weatherCache.lastUpdated[cacheKey] = os.time()
 
     print("💾 Weather data cached for: " .. location .. " (" .. cacheType .. ")")
 end
@@ -116,7 +136,7 @@ local function isCustomQuestionCacheValid(location, question)
 
     print("🔍 Checking cache validity for key: " .. cacheKey)
     print("  Last Updated: " .. tostring(lastUpdated))
-    print("  Current Time: " .. tostring(os.time() ))
+    print("  Current Time: " .. tostring(os.time()))
     print("  Expiration Time: " .. tostring(CACHE_EXPIRATION.current))
 
     if not lastUpdated then
@@ -124,7 +144,7 @@ local function isCustomQuestionCacheValid(location, question)
         return false
     end
 
-    local currentTime = os.time() 
+    local currentTime = os.time()
     local expirationTime = CACHE_EXPIRATION.current -- Use current weather expiration for custom questions
     local isValid = (currentTime - lastUpdated) < expirationTime
 
