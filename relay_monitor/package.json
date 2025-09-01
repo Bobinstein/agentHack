@@ -1,0 +1,31 @@
+{
+  "name": "relay-monitor",
+  "version": "1.0.0",
+  "description": "Offchain node script that monitors AO relay process and executes HTTP requests",
+  "main": "relay_monitor.js",
+  "scripts": {
+    "start": "node relay_monitor.js",
+    "dev": "node --watch relay_monitor.js"
+  },
+  "dependencies": {
+    "@permaweb/aoconnect": "^0.1.0",
+    "@vela-ventures/vento-sdk": "^1.1.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.6.1",
+    "ethers": "^6.15.0",
+    "sqlite3": "^5.1.6"
+  },
+  "keywords": [
+    "ao",
+    "arweave",
+    "relay",
+    "http",
+    "axios",
+    "sqlite"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
