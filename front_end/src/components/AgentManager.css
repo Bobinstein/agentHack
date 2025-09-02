@@ -1049,3 +1049,51 @@ select option {
     max-width: 300px;
   }
 }
+
+/* Debug Section */
+.debug-section {
+  margin-top: 2rem;
+  border-top: 1px solid rgba(0, 255, 65, 0.2);
+  padding-top: 1.5rem;
+}
+
+.debug-section details {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.debug-section summary {
+  color: #00ff88;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem;
+  background: rgba(0, 255, 65, 0.1);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.debug-section summary:hover {
+  background: rgba(0, 255, 65, 0.2);
+}
+
+.debug-content {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: 4px;
+  padding: 1rem;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.debug-content pre {
+  color: #00ff88;
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

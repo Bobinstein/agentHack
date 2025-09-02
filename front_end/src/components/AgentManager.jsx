@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./AgentManager.css";
 import Calendar from "./Calendar";
 import Weather from "./Weather";
@@ -6,6 +6,7 @@ import { message, createDataItemSigner } from "@permaweb/aoconnect";
 
 const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
   const [agentData, setAgentData] = useState(null);
+  const [parsedData, setParsedData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showAddToken, setShowAddToken] = useState(false);
@@ -31,6 +32,16 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
     priority: "medium",
   });
   const [addingEvent, setAddingEvent] = useState(false);
+
+  // Update parsedData when agentData changes
+  useEffect(() => {
+    if (agentData) {
+      const parsed = parseAgentData(agentData);
+      setParsedData(parsed);
+    } else {
+      setParsedData(null);
+    }
+  }, [agentData]);
 
   const handleAddToken = async () => {
     if (!newTokenId.trim() || !envVars.AGENT_PROCESS_ID) return;
@@ -291,30 +302,14 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
   };
 
   const renderAgentData = () => {
-    if (!agentData) return null;
-
-    const parsedData = parseAgentData(agentData);
-    if (!parsedData) {
-      return (
-        <div className="agent-data">
-          <h3>GUS Agent Data</h3>
-          <div className="data-content">
-            <p>No parseable data found or data format is unexpected.</p>
-            <details>
-              <summary>Raw Response</summary>
-              <pre>{JSON.stringify(agentData, null, 2)}</pre>
-            </details>
-          </div>
-        </div>
-      );
-    }
+    if (!agentData || !parsedData) return null;
 
     return (
       <div className="agent-data">
         {/* Date Header */}
-        {parsedData.date && (
+        {lastUpdated && (
           <div className="date-header">
-            <h2>{parsedData.date}</h2>
+            <h2>{new Date(lastUpdated).toLocaleDateString()}</h2>
           </div>
         )}
 
@@ -493,7 +488,7 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
                       type="text"
                       value={newLocation}
                       onChange={(e) => setNewLocation(e.target.value)}
-                      placeholder="Enter city, state (e.g., Little France, NY)"
+                      placeholder="Enter city, state (e.g., New York City, NY)"
                       disabled={settingLocation}
                     />
                   </div>
@@ -868,6 +863,18 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
         </div>
 
         {renderAgentData()}
+
+        {/* Debug Section */}
+        {parsedData && (
+          <div className="debug-section">
+            <details>
+              <summary>🔍 Debug: Raw Agent Response Data</summary>
+              <div className="debug-content">
+                <pre>{JSON.stringify(parsedData, null, 2)}</pre>
+              </div>
+            </details>
+          </div>
+        )}
       </div>
     </div>
   );

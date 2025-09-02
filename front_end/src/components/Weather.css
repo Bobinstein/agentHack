@@ -393,3 +393,45 @@
     font-size: 2.5rem;
   }
 }
+
+/* Error and Loading States */
+.weather-error {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 2rem;
+  color: #ff4444;
+}
+
+.error-message {
+  color: #ff6666;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.weather-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: rgba(0, 255, 65, 0.8);
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+/* Forecast content container - no additional styles needed */
+
+.weather-details .weather-time {
+  color: rgba(0, 255, 65, 0.8);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}

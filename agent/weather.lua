@@ -19,7 +19,7 @@
 local json = require("json")
 
 -- Authorization function
-local function isAuthorized(msg)
+function isAuthorized(msg)
     return msg.From == Owner or msg.From == CrontrollerProcessId
 end
 
@@ -57,20 +57,20 @@ local GUS_PERSONALITY_PROMPT =
     " timezone. The clients are crypto bros, and will be interested in if the weather is good for 'touching grass' or watching charts. "
 
 -- Utility function to format location for API calls
-local function formatLocation(location)
+function formatLocation(location)
     -- Remove extra spaces and normalize
     return string.gsub(location, "%s+", " "):gsub("^%s*(.-)%s*$", "%1")
 end
 
 -- Cache utility functions
-local function getCacheKey(location, cacheType)
+function getCacheKey(location, cacheType)
     local normalizedLocation = formatLocation(location)
     -- Since os.date is not available, use a simple cache key without date
     -- This will cache by location and type only
     return normalizedLocation .. "_" .. cacheType
 end
 
-local function isCacheValid(location, cacheType)
+function isCacheValid(location, cacheType)
     local cacheKey = getCacheKey(location, cacheType)
     local lastUpdated = weatherCache.lastUpdated[cacheKey]
 
@@ -84,12 +84,12 @@ local function isCacheValid(location, cacheType)
     return (currentTime - lastUpdated) < expirationTime
 end
 
-local function getCachedWeather(location, cacheType)
+function getCachedWeather(location, cacheType)
     local cacheKey = getCacheKey(location, cacheType)
     return weatherCache[cacheType][cacheKey]
 end
 
-local function setCachedWeather(location, cacheType, data)
+function setCachedWeather(location, cacheType, data)
     local cacheKey = getCacheKey(location, cacheType)
     weatherCache[cacheType][cacheKey] = data
     weatherCache.lastUpdated[cacheKey] = os.time()
@@ -98,7 +98,7 @@ local function setCachedWeather(location, cacheType, data)
 end
 
 -- Special cache function for custom weather questions
-local function setCachedCustomQuestion(location, question, data)
+function setCachedCustomQuestion(location, question, data)
     local cacheKey = formatLocation(location) .. "_custom_" .. string.gsub(question, "[^%w]", "_")
     weatherCache.customQuestions = weatherCache.customQuestions or {}
     weatherCache.customQuestions[cacheKey] = data
@@ -111,7 +111,7 @@ local function setCachedCustomQuestion(location, question, data)
     print("  Cache Size: " .. (weatherCache.customQuestions and #weatherCache.customQuestions or 0))
 end
 
-local function getCachedCustomQuestion(location, question)
+function getCachedCustomQuestion(location, question)
     local cacheKey = formatLocation(location) .. "_custom_" .. string.gsub(question, "[^%w]", "_")
     weatherCache.customQuestions = weatherCache.customQuestions or {}
 
@@ -130,7 +130,7 @@ local function getCachedCustomQuestion(location, question)
     return result
 end
 
-local function isCustomQuestionCacheValid(location, question)
+function isCustomQuestionCacheValid(location, question)
     local cacheKey = formatLocation(location) .. "_custom_" .. string.gsub(question, "[^%w]", "_")
     local lastUpdated = weatherCache.lastUpdated[cacheKey]
 
@@ -154,7 +154,7 @@ local function isCustomQuestionCacheValid(location, question)
     return isValid
 end
 
-local function clearExpiredCache()
+function clearExpiredCache()
     local currentTime = os.time()
     local cleared = 0
 
@@ -174,7 +174,7 @@ local function clearExpiredCache()
 end
 
 -- Function to make weather API calls via relay
-local function fetchWeatherData(location, prompt, customTags)
+function fetchWeatherData(location, prompt, customTags)
     local url = WEATHER_API_BASE .. "/assistant/session"
 
     -- Create the request body for the AI Weather Assistant
@@ -807,15 +807,5 @@ Handlers.add("fetch-daily-weather-auto",
 --     end
 -- )
 
--- Export the weather module
-return {
-    weather = weather,
-    fetchWeatherData = fetchWeatherData,
-    weatherCache = weatherCache,
-    isCacheValid = isCacheValid,
-    getCachedWeather = getCachedWeather,
-    setCachedWeather = setCachedWeather,
-    setCachedCustomQuestion = setCachedCustomQuestion,
-    getCachedCustomQuestion = getCachedCustomQuestion,
-    isCustomQuestionCacheValid = isCustomQuestionCacheValid
-}
+-- Functions are now globally available
+return weather

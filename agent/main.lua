@@ -319,17 +319,23 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
         if requestType == "hourly" or requestType == "daily" then
             print("🌤️ Processing " .. requestType .. " weather response for: " .. location)
 
-            if success and parsedData.answer then
+            -- Handle nested data structure from relay response
+            local actualData = parsedData
+            if parsedData.data then
+                actualData = parsedData.data
+            end
+
+            if success and actualData.answer then
                 print("  AI Weather Assistant Response received")
-                print("  Answer length: " .. #parsedData.answer .. " characters")
+                print("  Answer length: " .. #actualData.answer .. " characters")
 
                 -- Cache the weather response
                 if setCachedWeather then
                     local weatherData = {
                         timestamp = os.time(),
-                        description = parsedData.answer,
+                        description = actualData.answer,
                         source = "ai-assistant",
-                        session_id = parsedData.session_id
+                        session_id = actualData.session_id
                     }
 
                     -- Use the correct cache type mapping
@@ -352,15 +358,15 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
                         Target = msg.Tags["X-Requestor"],
                         Action = requestType .. "-weather-updated",
                         Location = location,
-                        Data = parsedData.answer,
+                        Data = actualData.answer,
                         Status = "success"
                     })
                     print("📤 Weather response sent to requestor: " .. msg.Tags["X-Requestor"])
                 else
                     print("🕐 Cron job: " .. requestType .. " weather cache updated silently")
                 end
-            elseif success and parsedData.error then
-                print("  AI Weather Assistant Error: " .. tostring(parsedData.error))
+            elseif success and actualData.error then
+                print("  AI Weather Assistant Error: " .. tostring(actualData.error))
 
                 -- Send error response back to requestor if not a cron job
                 if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= "crontroller" then
@@ -368,7 +374,7 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
                         Target = msg.Tags["X-Requestor"],
                         Action = requestType .. "-weather-error",
                         Location = location,
-                        Error = parsedData.error,
+                        Error = actualData.error,
                         Status = "error"
                     })
                     print("📤 Error response sent to requestor: " .. msg.Tags["X-Requestor"])
@@ -656,10 +662,10 @@ Handlers.add("get-daily-summary",
                 -- Include the entire weather cache structure (sanitized)
                 completeData.weather.completeCache = sanitizeTable(weatherCache)
 
-                -- Check for current weather cache
-                local currentCacheKey = defaultLocation .. "_current"
-                if weatherCache.current and weatherCache.current[currentCacheKey] then
-                    local currentWeather = weatherCache.current[currentCacheKey]
+                -- Check for current weather cache (using hourly as current)
+                local currentCacheKey = defaultLocation .. "_hourly"
+                if weatherCache.hourly and weatherCache.hourly[currentCacheKey] then
+                    local currentWeather = weatherCache.hourly[currentCacheKey]
                     completeData.weather.current = sanitizeTable(currentWeather)
                 else
                     completeData.weather.current = { error = "Weather data not available" }
