@@ -61,6 +61,21 @@ async function initializeAgent() {
     });
     console.log(`✅ User wallet added to relay whitelist: ${whitelistTxId}`);
 
+        console.log("\n👤 Adding agent to relay whitelist...");
+        const agentWhitelistTxId = await message({
+          process: relayProcessId,
+          tags: [
+            { name: "Action", value: "Whitelist-Manage" },
+            { name: "Operation", value: "add" },
+            { name: "Address", value: agentProcessId },
+          ],
+          signer: createDataItemSigner(jwk),
+          data: "",
+        });
+        console.log(
+          `✅ Agent added to relay whitelist: ${agentWhitelistTxId}`
+        );
+
     // 2. Set crontroller process ID in the agent
     console.log("\n⏰ Setting crontroller process ID in agent...");
     const crontrollerTxId = await message({
