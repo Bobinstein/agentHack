@@ -193,12 +193,12 @@ Handlers.add("cron-daily-email",
             Headers = json.encode({
                 ["Content-Type"] = "application/json",
                 Accept = "application/json",
-                ["api-key"] = "process.env.wouldnt-you-like-to-know"
+                ["api-key"] = "wouldnt-you-like-to-know"
             }),
             Data = json.encode({
                 sender = {
                     name = "GUS - Your Personal AO Assistant",
-                    email = "signup@gigautility.com"
+                    email = "preConfiguredEmailSender"
                 },
                 to = {
                     {

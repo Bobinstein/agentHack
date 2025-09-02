@@ -39,8 +39,8 @@ local crons = {
         ["Interval"] = 1000 * 60 * 60 * 24,
         ["Action"] = "cron-daily-email",
         ["XTags"] = {
-            ["Email-To"] = "stephen@gigautility.com",
-            ["Email-Name"] = "Stephen"
+            ["Email-To"] = "preConfiguredEmailAddress",
+            ["Email-Name"] = "preConfiguredEmailName"
         }
     },
 

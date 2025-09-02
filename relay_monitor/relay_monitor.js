@@ -43,6 +43,12 @@
  * - BREVO_API_KEY_PLACEHOLDER: Placeholder text for Brevo API key
  * - OPENWEATHER_API_KEY: API key for OpenWeather service
  * - OPENWEATHER_API_KEY_PLACEHOLDER: Placeholder text for OpenWeather API key
+ * - EMAIL_TO_ADDRESS: Email address for sending emails
+ * - EMAIL_TO_ADDRESS_PLACEHOLDER: Placeholder text for email address
+ * - EMAIL_TO_NAME: Name for email recipient
+ * - EMAIL_TO_NAME_PLACEHOLDER: Placeholder text for email name
+ * - EMAIL_SENDER_ADDRESS: Sender email address for emails
+ * - EMAIL_SENDER_ADDRESS_PLACEHOLDER: Placeholder text for sender email address
  * - AO_WALLET_PATH: Path to AO wallet file (supports ~ for home directory)
  * - GATEWAY_URL: Arweave gateway URL for AO operations
  * - MU_URL: AO MU (Message Unit) endpoint URL
@@ -102,6 +108,15 @@ const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
 const OPENWEATHER_API_KEY_PLACEHOLDER =
   process.env.OPENWEATHER_API_KEY_PLACEHOLDER;
 
+// Email configuration with placeholders for security
+const EMAIL_TO_ADDRESS = process.env.EMAIL_TO_ADDRESS;
+const EMAIL_TO_ADDRESS_PLACEHOLDER = process.env.EMAIL_TO_ADDRESS_PLACEHOLDER;
+const EMAIL_TO_NAME = process.env.EMAIL_TO_NAME;
+const EMAIL_TO_NAME_PLACEHOLDER = process.env.EMAIL_TO_NAME_PLACEHOLDER;
+const EMAIL_SENDER_ADDRESS = process.env.EMAIL_SENDER_ADDRESS;
+const EMAIL_SENDER_ADDRESS_PLACEHOLDER =
+  process.env.EMAIL_SENDER_ADDRESS_PLACEHOLDER;
+
 // ============================================================================
 // ENVIRONMENT VALIDATION
 // ============================================================================
@@ -118,6 +133,12 @@ function validateEnvironment() {
     "BREVO_API_KEY_PLACEHOLDER",
     "OPENWEATHER_API_KEY",
     "OPENWEATHER_API_KEY_PLACEHOLDER",
+    "EMAIL_TO_ADDRESS",
+    "EMAIL_TO_ADDRESS_PLACEHOLDER",
+    "EMAIL_TO_NAME",
+    "EMAIL_TO_NAME_PLACEHOLDER",
+    "EMAIL_SENDER_ADDRESS",
+    "EMAIL_SENDER_ADDRESS_PLACEHOLDER",
     "AO_WALLET_PATH",
   ];
 
@@ -321,7 +342,7 @@ function extractTags(tags) {
 }
 
 /**
- * Replace API key placeholders with actual keys in data
+ * Replace API key and email placeholders with actual values in data
  */
 function replaceApiKeyPlaceholders(data) {
   if (typeof data === "string") {
@@ -342,12 +363,39 @@ function replaceApiKeyPlaceholders(data) {
       ),
       OPENWEATHER_API_KEY
     );
+
+    // Replace email address placeholder
+    data = data.replace(
+      new RegExp(
+        EMAIL_TO_ADDRESS_PLACEHOLDER.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "g"
+      ),
+      EMAIL_TO_ADDRESS
+    );
+
+    // Replace email name placeholder
+    data = data.replace(
+      new RegExp(
+        EMAIL_TO_NAME_PLACEHOLDER.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "g"
+      ),
+      EMAIL_TO_NAME
+    );
+
+    // Replace sender email address placeholder
+    data = data.replace(
+      new RegExp(
+        EMAIL_SENDER_ADDRESS_PLACEHOLDER.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "g"
+      ),
+      EMAIL_SENDER_ADDRESS
+    );
   }
   return data;
 }
 
 /**
- * Filter out API keys from response data for security
+ * Filter out API keys and email addresses from response data for security
  */
 function filterApiKeyFromResponse(data) {
   if (typeof data === "string") {
@@ -364,6 +412,27 @@ function filterApiKeyFromResponse(data) {
         "g"
       ),
       OPENWEATHER_API_KEY_PLACEHOLDER
+    );
+
+    // Replace actual email address with placeholder in responses
+    data = data.replace(
+      new RegExp(EMAIL_TO_ADDRESS.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+      EMAIL_TO_ADDRESS_PLACEHOLDER
+    );
+
+    // Replace actual email name with placeholder in responses
+    data = data.replace(
+      new RegExp(EMAIL_TO_NAME.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+      EMAIL_TO_NAME_PLACEHOLDER
+    );
+
+    // Replace actual sender email address with placeholder in responses
+    data = data.replace(
+      new RegExp(
+        EMAIL_SENDER_ADDRESS.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "g"
+      ),
+      EMAIL_SENDER_ADDRESS_PLACEHOLDER
     );
   }
   return data;
@@ -726,7 +795,7 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
       validateStatus: () => true, // Don't throw on HTTP error status
     };
 
-    // Replace API key placeholders with actual keys
+    // Replace API key and email placeholders with actual values
     let totalReplacements = 0;
 
     // Replace in URL
@@ -755,6 +824,45 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
       );
       totalReplacements++;
       console.log("    🌤️ Replaced OpenWeather API key in URL");
+    }
+
+    if (config.url.includes(EMAIL_TO_ADDRESS_PLACEHOLDER)) {
+      config.url = config.url.replace(
+        new RegExp(
+          EMAIL_TO_ADDRESS_PLACEHOLDER.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+          "g"
+        ),
+        EMAIL_TO_ADDRESS
+      );
+      totalReplacements++;
+      console.log("    📧 Replaced email address in URL");
+    }
+
+    if (config.url.includes(EMAIL_TO_NAME_PLACEHOLDER)) {
+      config.url = config.url.replace(
+        new RegExp(
+          EMAIL_TO_NAME_PLACEHOLDER.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+          "g"
+        ),
+        EMAIL_TO_NAME
+      );
+      totalReplacements++;
+      console.log("    👤 Replaced email name in URL");
+    }
+
+    if (config.url.includes(EMAIL_SENDER_ADDRESS_PLACEHOLDER)) {
+      config.url = config.url.replace(
+        new RegExp(
+          EMAIL_SENDER_ADDRESS_PLACEHOLDER.replace(
+            /[.*+?^${}()|[\]\\]/g,
+            "\\$&"
+          ),
+          "g"
+        ),
+        EMAIL_SENDER_ADDRESS
+      );
+      totalReplacements++;
+      console.log("    📤 Replaced sender email address in URL");
     }
 
     // Replace in headers
@@ -786,11 +894,55 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           totalReplacements++;
           console.log(`    🌤️ Replaced OpenWeather API key in header: ${key}`);
         }
+
+        if (value.includes(EMAIL_TO_ADDRESS_PLACEHOLDER)) {
+          parsedHeaders[key] = value.replace(
+            new RegExp(
+              EMAIL_TO_ADDRESS_PLACEHOLDER.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+              ),
+              "g"
+            ),
+            EMAIL_TO_ADDRESS
+          );
+          totalReplacements++;
+          console.log(`    📧 Replaced email address in header: ${key}`);
+        }
+
+        if (value.includes(EMAIL_TO_NAME_PLACEHOLDER)) {
+          parsedHeaders[key] = value.replace(
+            new RegExp(
+              EMAIL_TO_NAME_PLACEHOLDER.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+              "g"
+            ),
+            EMAIL_TO_NAME
+          );
+          totalReplacements++;
+          console.log(`    👤 Replaced email name in header: ${key}`);
+        }
+
+        if (value.includes(EMAIL_SENDER_ADDRESS_PLACEHOLDER)) {
+          parsedHeaders[key] = value.replace(
+            new RegExp(
+              EMAIL_SENDER_ADDRESS_PLACEHOLDER.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+              ),
+              "g"
+            ),
+            EMAIL_SENDER_ADDRESS
+          );
+          totalReplacements++;
+          console.log(`    📤 Replaced sender email address in header: ${key}`);
+        }
       }
     }
 
     if (totalReplacements > 0) {
-      console.log(`    ✅ Total API key replacements: ${totalReplacements}`);
+      console.log(
+        `    ✅ Total placeholder replacements: ${totalReplacements}`
+      );
     }
 
     // Handle POST/PUT/PATCH body data
@@ -844,7 +996,7 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
       }
     }
 
-    // Replace API keys in request body/data
+    // Replace API keys and email placeholders in request body/data
     if (config.data && typeof config.data === "string") {
       if (config.data.includes(BREVO_API_KEY_PLACEHOLDER)) {
         config.data = config.data.replace(
@@ -872,9 +1024,48 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
         totalReplacements++;
         console.log("    🌤️ Replaced OpenWeather API key in request body");
       }
+
+      if (config.data.includes(EMAIL_TO_ADDRESS_PLACEHOLDER)) {
+        config.data = config.data.replace(
+          new RegExp(
+            EMAIL_TO_ADDRESS_PLACEHOLDER.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+            "g"
+          ),
+          EMAIL_TO_ADDRESS
+        );
+        totalReplacements++;
+        console.log("    📧 Replaced email address in request body");
+      }
+
+      if (config.data.includes(EMAIL_TO_NAME_PLACEHOLDER)) {
+        config.data = config.data.replace(
+          new RegExp(
+            EMAIL_TO_NAME_PLACEHOLDER.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+            "g"
+          ),
+          EMAIL_TO_NAME
+        );
+        totalReplacements++;
+        console.log("    👤 Replaced email name in request body");
+      }
+
+      if (config.data.includes(EMAIL_SENDER_ADDRESS_PLACEHOLDER)) {
+        config.data = config.data.replace(
+          new RegExp(
+            EMAIL_SENDER_ADDRESS_PLACEHOLDER.replace(
+              /[.*+?^${}()|[\]\\]/g,
+              "\\$&"
+            ),
+            "g"
+          ),
+          EMAIL_SENDER_ADDRESS
+        );
+        totalReplacements++;
+        console.log("    📤 Replaced sender email address in request body");
+      }
     }
 
-    // Also check for API keys in JSON body objects
+    // Also check for API keys and email placeholders in JSON body objects
     if (config.data && typeof config.data === "object") {
       const dataStr = JSON.stringify(config.data);
 
@@ -907,6 +1098,54 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
         );
         totalReplacements++;
         console.log("    🌤️ Replaced OpenWeather API key in JSON body object");
+      }
+
+      if (dataStr.includes(EMAIL_TO_ADDRESS_PLACEHOLDER)) {
+        config.data = JSON.parse(
+          dataStr.replace(
+            new RegExp(
+              EMAIL_TO_ADDRESS_PLACEHOLDER.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+              ),
+              "g"
+            ),
+            EMAIL_TO_ADDRESS
+          )
+        );
+        totalReplacements++;
+        console.log("    📧 Replaced email address in JSON body object");
+      }
+
+      if (dataStr.includes(EMAIL_TO_NAME_PLACEHOLDER)) {
+        config.data = JSON.parse(
+          dataStr.replace(
+            new RegExp(
+              EMAIL_TO_NAME_PLACEHOLDER.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+              "g"
+            ),
+            EMAIL_TO_NAME
+          )
+        );
+        totalReplacements++;
+        console.log("    👤 Replaced email name in JSON body object");
+      }
+
+      if (dataStr.includes(EMAIL_SENDER_ADDRESS_PLACEHOLDER)) {
+        config.data = JSON.parse(
+          dataStr.replace(
+            new RegExp(
+              EMAIL_SENDER_ADDRESS_PLACEHOLDER.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+              ),
+              "g"
+            ),
+            EMAIL_SENDER_ADDRESS
+          )
+        );
+        totalReplacements++;
+        console.log("    📤 Replaced sender email address in JSON body object");
       }
     }
 
