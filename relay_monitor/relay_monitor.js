@@ -1898,10 +1898,15 @@ async function checkForNewMessages(db, message, signer) {
       }
     `;
 
+    console.log(
+      `    🔍 Executing GraphQL query for process: ${MOCK_RELAY_PROCESS_ID}`
+    );
     const broadData = await executeGraphQLQuery(broadQuery);
 
     // Now run the original specific query
     const data = await executeGraphQLQuery(query);
+    const edgeCount = data?.data?.transactions?.edges?.length || 0;
+    console.log(`    📊 GraphQL returned ${edgeCount} transaction edges`);
 
     // Also check if there are ANY transactions with the tags we're looking for
     const tagCheckQuery = `
@@ -1965,18 +1970,29 @@ async function checkForNewMessages(db, message, signer) {
       }
     }
     // Found matching transactions
+    if (matchingTransactions === 0) {
+      console.log("    ℹ️ No matching Relay-Response transactions found");
+    }
 
     // Show only the most recent transaction info (unless it needs processing)
     if (mostRecentTx && mostRecentTags) {
       const requestTxid = mostRecentTags.Reference;
+      const lastTxId = mostRecentTx.id; // full, untruncated
       if (requestTxid) {
         const alreadyProcessed = await isRequestProcessed(db, requestTxid);
+        console.log(
+          `    🧾 Most recent txId: ${lastTxId} | processed: ${
+            alreadyProcessed ? "yes" : "no"
+          }`
+        );
         if (!alreadyProcessed) {
-          console.log(
-            `🆕 New request found: ${mostRecentTx.id.substring(0, 8)}...`
-          );
+          console.log(`🆕 New request found (will process)`);
         }
+      } else {
+        console.log(`    🧾 Most recent txId: ${lastTxId} | no Reference tag`);
       }
+    } else {
+      console.log("    ℹ️ No recent matching transaction to summarize");
     }
 
     // Process each transaction
