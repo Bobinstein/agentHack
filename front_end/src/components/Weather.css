@@ -419,12 +419,58 @@
 
 .weather-loading {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 2rem;
   color: rgba(0, 255, 65, 0.8);
   font-style: italic;
   font-size: 1.1rem;
+  gap: 1rem;
+}
+
+.loading-spinner {
+  font-size: 2rem;
+  animation: spin 2s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 65, 0.3));
+}
+
+.loading-text {
+  color: rgba(0, 255, 65, 0.8);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.refresh-info {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: rgba(0, 255, 65, 0.6);
+  font-style: normal;
+}
+
+.forecast-refresh {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.forecast-refresh label {
+  color: rgba(0, 255, 65, 0.7);
+  font-size: 0.8rem;
+}
+
+.forecast-refresh span {
+  color: #00ff88;
+  font-weight: 500;
 }
 
 /* Forecast content container - no additional styles needed */

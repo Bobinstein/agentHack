@@ -32,6 +32,7 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
     priority: "medium",
   });
   const [addingEvent, setAddingEvent] = useState(false);
+  const [autoRefreshInterval, setAutoRefreshInterval] = useState(null);
 
   // Update parsedData when agentData changes
   useEffect(() => {
@@ -42,6 +43,31 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
       setParsedData(null);
     }
   }, [agentData]);
+
+  // Auto-refresh mechanism
+  useEffect(() => {
+    // Clear any existing interval
+    if (autoRefreshInterval) {
+      clearInterval(autoRefreshInterval);
+    }
+
+    // Set up auto-refresh every 3 minutes if we have data
+    if (parsedData && parsedData.weather) {
+      const interval = setInterval(() => {
+        console.log("Auto-refreshing agent data...");
+        getAgentData();
+      }, 3 * 60 * 1000); // 3 minutes
+
+      setAutoRefreshInterval(interval);
+    }
+
+    // Cleanup on unmount or when dependencies change
+    return () => {
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+      }
+    };
+  }, [parsedData]);
 
   const handleAddToken = async () => {
     if (!newTokenId.trim() || !envVars.AGENT_PROCESS_ID) return;
