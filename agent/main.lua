@@ -267,7 +267,7 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
                 print("  Answer: " .. string.sub(parsedData.answer, 1, 100) .. "...")
 
                 -- Send response back to the original requestor (skip if cron job)
-                if msg.Tags["X-Requestor"] ~= "crontroller" then
+                if msg.Tags["X-Requestor"] ~= CrontrollerProcessId then
                     ao.send({
                         Target = msg.Tags["X-Requestor"],
                         Action = "weather-question-answered",
@@ -286,7 +286,7 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
                 print("  AI Weather Assistant Error: " .. tostring(parsedData.error))
 
                 -- Send error response back to the original requestor (skip if cron job)
-                if msg.Tags["X-Requestor"] ~= "crontroller" then
+                if msg.Tags["X-Requestor"] ~= CrontrollerProcessId then
                     ao.send({
                         Target = msg.Tags["X-Requestor"],
                         Action = "weather-question-error",
@@ -304,7 +304,7 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
                 print("  Unexpected response format: " .. json.encode(parsedData))
 
                 -- Send generic response back to the original requestor (skip if cron job)
-                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= "crontroller" then
+                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= CrontrollerProcessId then
                     ao.send({
                         Target = msg.Tags["X-Requestor"],
                         Action = "weather-question-answered",
@@ -364,7 +364,7 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
                 end
 
                 -- Send response back to requestor if not a cron job
-                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= "crontroller" then
+                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= CrontrollerProcessId then
                     ao.send({
                         Target = msg.Tags["X-Requestor"],
                         Action = requestType .. "-weather-updated",
@@ -380,7 +380,7 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
                 print("  AI Weather Assistant Error: " .. tostring(actualData.error))
 
                 -- Send error response back to requestor if not a cron job
-                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= "crontroller" then
+                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= CrontrollerProcessId then
                     ao.send({
                         Target = msg.Tags["X-Requestor"],
                         Action = requestType .. "-weather-error",
@@ -396,7 +396,7 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
                 print("  Unexpected response format: " .. json.encode(parsedData))
 
                 -- Send generic response back to requestor if not a cron job
-                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= "crontroller" then
+                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= CrontrollerProcessId then
                     ao.send({
                         Target = msg.Tags["X-Requestor"],
                         Action = requestType .. "-weather-updated",

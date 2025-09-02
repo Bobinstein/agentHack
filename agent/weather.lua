@@ -41,7 +41,7 @@ weatherCache = weatherCache or {
 
 -- Cache expiration settings (in milliseconds)
 local CACHE_EXPIRATION = {
-    daily = 36 * 60 * 60 * 1000,   -- 36 hours
+    daily = 36 * 60 * 60 * 1000, -- 36 hours
     hourly = 2 * 60 * 60 * 1000, -- 2 hours
 }
 
@@ -137,7 +137,7 @@ function isCustomQuestionCacheValid(location, question)
     print("🔍 Checking cache validity for key: " .. cacheKey)
     print("  Last Updated: " .. tostring(lastUpdated))
     print("  Current Time: " .. tostring(os.time()))
-    print("  Expiration Time: " .. tostring(CACHE_EXPIRATION.current))
+    print("  Expiration Time: " .. tostring(CACHE_EXPIRATION.hourly))
 
     if not lastUpdated then
         print("  Cache validity: FALSE (no last updated timestamp)")
@@ -145,7 +145,7 @@ function isCustomQuestionCacheValid(location, question)
     end
 
     local currentTime = os.time()
-    local expirationTime = CACHE_EXPIRATION.current -- Use current weather expiration for custom questions
+    local expirationTime = CACHE_EXPIRATION.hourly -- Use hourly weather expiration for custom questions
     local isValid = (currentTime - lastUpdated) < expirationTime
 
     print("  Time difference: " .. tostring(currentTime - lastUpdated) .. "ms")
