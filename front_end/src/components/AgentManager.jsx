@@ -294,6 +294,10 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
         if (parsed.note && !originalNote) {
           setNoteContent(parsed.note);
           setOriginalNote(parsed.note);
+        } else if (!parsed.note && !originalNote) {
+          // Initialize empty note content if no note exists
+          setNoteContent("");
+          setOriginalNote("");
         }
 
         return parsed;
@@ -765,37 +769,35 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
           </div>
         )}
 
-        {/* Note Section */}
-        {parsedData.note && (
-          <div className="data-section note-section">
-            <div className="section-header">
-              <h4>Note</h4>
-              {editingNote && noteContent !== originalNote && (
-                <button
-                  className="update-note-button"
-                  onClick={handleUpdateNote}
-                  disabled={updatingNote}
-                >
-                  {updatingNote ? "Updating..." : "Update Note"}
-                </button>
-              )}
-            </div>
-
-            <div className="note-content">
-              <textarea
-                className="note-input"
-                value={noteContent}
-                onChange={(e) => {
-                  setNoteContent(e.target.value);
-                  if (!editingNote) setEditingNote(true);
-                }}
-                placeholder="Enter your note here..."
-                rows={4}
+        {/* Note Section - Always display */}
+        <div className="data-section note-section">
+          <div className="section-header">
+            <h4>Note</h4>
+            {editingNote && noteContent !== originalNote && (
+              <button
+                className="update-note-button"
+                onClick={handleUpdateNote}
                 disabled={updatingNote}
-              />
-            </div>
+              >
+                {updatingNote ? "Updating..." : "Update Note"}
+              </button>
+            )}
           </div>
-        )}
+
+          <div className="note-content">
+            <textarea
+              className="note-input"
+              value={noteContent}
+              onChange={(e) => {
+                setNoteContent(e.target.value);
+                if (!editingNote) setEditingNote(true);
+              }}
+              placeholder="Enter your note here..."
+              rows={4}
+              disabled={updatingNote}
+            />
+          </div>
+        </div>
 
         {/* Any other sections (excluding portfolio, requestType, timestamp, distributions, tokenPrices, calendar, weather, system, timezone, globals, date, localTimestamp, generatedAt) */}
         {Object.entries(parsedData)
