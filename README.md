@@ -62,6 +62,8 @@ Create 3 AO processes with the following specifications:
 2. **Relay Process**: Load `relay_process/mock_relay.lua`
 3. **Crontroller Process**: Load `crontroller/crontroller.lua` with **1 minute cron interval**
 
+Use legacynet for all 3 processes.
+
 ### Step 4: Update Process IDs
 
 1. Update `relay_monitor/.env` with your process IDs:
