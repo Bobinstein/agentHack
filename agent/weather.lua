@@ -41,8 +41,8 @@ weatherCache = weatherCache or {
 
 -- Cache expiration settings (in milliseconds)
 local CACHE_EXPIRATION = {
-    daily = 24 * 60 * 60 * 1000, -- 24 hours
-    hourly = 60 * 60 * 1000,     -- 1 hour
+    daily = 36 * 60 * 60 * 1000,   -- 36 hours
+    hourly = 2 * 60 * 60 * 1000, -- 2 hours
 }
 
 -- Weather API endpoints (using OpenWeatherMap AI Weather Assistant with fallback)

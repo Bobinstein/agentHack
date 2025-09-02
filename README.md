@@ -163,7 +163,7 @@ cd front_end
 yarn dev
 ```
 
-Your AgentHack assistant will be available at `http://localhost:5173`
+Your AgentHack assistant will be available at `http://localhost:3000`
 
 ### Step 11: Initial Processing
 
