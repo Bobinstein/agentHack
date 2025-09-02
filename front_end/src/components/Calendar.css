@@ -1,0 +1,379 @@
+.calendar-container {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 2px solid rgba(0, 255, 65, 0.4);
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.2);
+  margin-bottom: 2rem;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.calendar-navigation {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.nav-button {
+  background: rgba(0, 0, 0, 0.6);
+  color: #00ff41;
+  border: 1px solid rgba(0, 255, 65, 0.4);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Courier New", monospace;
+}
+
+.nav-button:hover {
+  background: rgba(0, 255, 65, 0.1);
+  border-color: #00ff41;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+}
+
+.today-button {
+  background: linear-gradient(135deg, #00ff41 0%, #00ff88 100%);
+  color: #000;
+  border: 1px solid #00ff41;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Courier New", monospace;
+}
+
+.today-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+}
+
+.calendar-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #00ff41;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+  text-align: center;
+  flex: 1;
+}
+
+.calendar-view-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-button {
+  background: rgba(0, 0, 0, 0.6);
+  color: #00ff88;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Courier New", monospace;
+}
+
+.view-button:hover {
+  background: rgba(0, 255, 65, 0.1);
+  border-color: #00ff41;
+}
+
+.view-button.active {
+  background: rgba(0, 255, 65, 0.2);
+  border-color: #00ff41;
+  color: #00ff41;
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+.calendar-body {
+  min-height: 400px;
+}
+
+/* Weekly View */
+.calendar-weekly {
+  display: flex;
+  flex-direction: column;
+}
+
+.week-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  margin-bottom: 1rem;
+}
+
+.week-day-header {
+  background: rgba(0, 255, 65, 0.1);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.day-name {
+  font-weight: 600;
+  color: #00ff41;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.day-date {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  min-height: 300px;
+}
+
+.week-day {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem;
+  min-height: 120px;
+}
+
+.day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Daily View */
+.calendar-daily {
+  display: flex;
+  flex-direction: column;
+}
+
+.day-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.day-header h3 {
+  color: #00ff41;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+}
+
+.day-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hour-slot {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+}
+
+.hour-label {
+  min-width: 60px;
+  color: rgba(0, 255, 65, 0.7);
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: "Courier New", monospace;
+}
+
+.hour-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+/* Monthly View */
+.calendar-monthly {
+  display: flex;
+  flex-direction: column;
+}
+
+.month-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  margin-bottom: 1rem;
+}
+
+.month-day-header {
+  background: rgba(0, 255, 65, 0.1);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 6px;
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: 600;
+  color: #00ff41;
+  font-size: 0.85rem;
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  min-height: 400px;
+}
+
+.month-day {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: 6px;
+  padding: 0.5rem;
+  min-height: 80px;
+  position: relative;
+}
+
+.month-day.other-month {
+  opacity: 0.4;
+}
+
+.month-day.today {
+  border-color: #00ff41;
+  background: rgba(0, 255, 65, 0.1);
+}
+
+.day-number {
+  font-weight: 600;
+  color: #00ff88;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Calendar Events */
+.calendar-event {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid;
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.8rem;
+  color: #000;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.event-time {
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+  font-family: "Courier New", monospace;
+}
+
+.event-name {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.event-location {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.daily-event {
+  margin-bottom: 0.5rem;
+}
+
+.month-event {
+  margin-bottom: 0.25rem;
+  padding: 0.25rem;
+}
+
+.month-event .event-name {
+  font-size: 0.75rem;
+  margin-bottom: 0;
+}
+
+.more-events {
+  color: #00ff88;
+  font-size: 0.75rem;
+  font-style: italic;
+  text-align: center;
+  padding: 0.25rem;
+}
+
+.calendar-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 255, 65, 0.2);
+  font-size: 0.9rem;
+}
+
+.event-count {
+  color: #00ff88;
+  font-weight: 600;
+}
+
+.timezone-info {
+  color: rgba(0, 255, 65, 0.7);
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .calendar-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .calendar-navigation {
+    order: 1;
+  }
+
+  .calendar-title {
+    order: 2;
+  }
+
+  .calendar-view-controls {
+    order: 3;
+  }
+
+  .week-header,
+  .week-grid,
+  .month-header,
+  .month-grid {
+    grid-template-columns: repeat(7, 1fr);
+    font-size: 0.8rem;
+  }
+
+  .week-day,
+  .month-day {
+    padding: 0.25rem;
+    min-height: 80px;
+  }
+
+  .calendar-event {
+    padding: 0.25rem;
+    font-size: 0.7rem;
+  }
+
+  .calendar-info {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}

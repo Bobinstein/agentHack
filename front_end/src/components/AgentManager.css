@@ -1,0 +1,974 @@
+.agent-manager {
+  margin-top: 2rem;
+}
+
+.manager-card {
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(20px);
+  border: 2px solid #00ff41;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.3),
+    inset 0 0 30px rgba(0, 255, 65, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.manager-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 65, 0.1),
+    transparent
+  );
+  animation: scan 3s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.manager-header h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #00ff41;
+  text-shadow: 0 0 10px #00ff41;
+}
+
+.manager-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.refresh-button {
+  background: linear-gradient(135deg, #00ff41 0%, #00ff88 100%);
+  color: #000;
+  padding: 0.875rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  border: 2px solid #00ff41;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+  font-family: "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.refresh-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 255, 65, 0.6), 0 0 30px rgba(0, 255, 65, 0.8);
+  background: linear-gradient(135deg, #00ff88 0%, #00ff41 100%);
+}
+
+.refresh-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.config-button {
+  background: rgba(0, 0, 0, 0.8);
+  color: #00ff41;
+  padding: 0.875rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  border: 2px solid rgba(0, 255, 65, 0.3);
+  font-family: "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.config-button:hover {
+  background: rgba(0, 255, 65, 0.1);
+  border-color: #00ff41;
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+}
+
+.error-message {
+  background: rgba(255, 0, 0, 0.2);
+  border: 1px solid #ff0000;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  color: #ff6b6b;
+  font-weight: 500;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+}
+
+.last-updated {
+  background: rgba(0, 255, 65, 0.1);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  color: #00ff41;
+  font-size: 0.9rem;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+}
+
+.agent-info {
+  background: rgba(0, 255, 65, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.agent-info h3 {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #00ff41;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info-item label {
+  font-weight: 600;
+  color: rgba(0, 255, 65, 0.7);
+  font-size: 0.9rem;
+}
+
+.info-item span {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  color: #00ff88;
+  word-break: break-all;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.agent-data {
+  background: rgba(0, 255, 65, 0.05);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.agent-data h3 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #00ff41;
+  text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+}
+
+.data-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+}
+
+.data-section h4 {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #00ff41;
+  border-bottom: 2px solid rgba(0, 255, 65, 0.5);
+  padding-bottom: 0.5rem;
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+}
+
+.data-section h5 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.data-content {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  padding: 1rem;
+  overflow-x: auto;
+  border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.data-content pre {
+  margin: 0;
+  color: #00ff88;
+  font-family: "Courier New", monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.data-value {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #00ff88;
+  font-family: "Courier New", monospace;
+  font-size: 1rem;
+  word-break: break-all;
+  border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+/* Portfolio Section */
+.portfolio-section {
+  background: rgba(0, 255, 65, 0.04);
+  border-color: rgba(0, 255, 65, 0.25);
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.08);
+  position: relative;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h4 {
+  margin: 0;
+}
+
+.add-token-button {
+  background: linear-gradient(135deg, #00ff41 0%, #00ff88 100%);
+  color: #000;
+  border: 1px solid #00ff41;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Courier New", monospace;
+}
+
+.add-token-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+}
+
+/* Add Token Modal */
+.add-token-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  border-radius: 15px;
+}
+
+.overlay-content {
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid rgba(0, 255, 65, 0.4);
+  border-radius: 15px;
+  padding: 2rem;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.3);
+}
+
+.overlay-content h5 {
+  color: #00ff41;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  color: #00ff88;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.input-group input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: #00ff41;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #00ff41;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+}
+
+.input-group input::placeholder {
+  color: rgba(0, 255, 65, 0.5);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.cancel-button,
+.add-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+}
+
+.cancel-button {
+  background: rgba(0, 0, 0, 0.6);
+  color: #00ff88;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.cancel-button:hover {
+  background: rgba(0, 255, 65, 0.1);
+  border-color: #00ff41;
+}
+
+.add-button {
+  background: linear-gradient(135deg, #00ff41 0%, #00ff88 100%);
+  color: #000;
+  border: 1px solid #00ff41;
+}
+
+.add-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+}
+
+.add-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Portfolio Summary */
+.portfolio-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-item {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.summary-item label {
+  display: block;
+  color: rgba(0, 255, 65, 0.8);
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.summary-item span {
+  color: #00ff88;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+/* Balances Section */
+.balances-section {
+  margin-top: 1.5rem;
+}
+
+.balances-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.balance-item {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+}
+
+.token-ticker {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #00ff41;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+}
+
+.token-balance {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.parsed-balance {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.raw-balance {
+  font-size: 0.8rem;
+  color: rgba(0, 255, 65, 0.6);
+}
+
+/* Raw Portfolio Section */
+.raw-portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.raw-portfolio-item {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+}
+
+.token-id {
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  color: #00ff41;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.token-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-row label {
+  font-weight: 600;
+  color: rgba(0, 255, 65, 0.8);
+  font-size: 0.9rem;
+}
+
+.detail-row span {
+  color: #00ff88;
+  font-size: 0.9rem;
+}
+
+.config-required {
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(20px);
+  border: 2px solid #ff0000;
+  border-radius: 20px;
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.3),
+    inset 0 0 30px rgba(255, 0, 0, 0.05);
+}
+
+.config-required h2 {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #ff0000;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.config-required p {
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  font-size: 1.1rem;
+  color: #ff6b6b;
+}
+
+.configure-button {
+  background: linear-gradient(135deg, #00ff41 0%, #00ff88 100%);
+  color: #000;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  border: 2px solid #00ff41;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+  font-family: "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.configure-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 255, 65, 0.6), 0 0 30px rgba(0, 255, 65, 0.8);
+  background: linear-gradient(135deg, #00ff88 0%, #00ff41 100%);
+}
+
+.connected-state {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Distributions Section */
+.distributions-section {
+  background: rgba(0, 255, 65, 0.08);
+  border-color: rgba(0, 255, 65, 0.4);
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.15);
+}
+
+.distributions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.distribution-item {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+}
+
+.token-header h5 {
+  margin: 0 0 1rem 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #00ff41;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.6);
+  text-align: center;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 65, 0.4);
+}
+
+.distribution-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.distribution-details .detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.distribution-details .detail-row:last-child {
+  border-bottom: none;
+}
+
+.distribution-details .detail-row label {
+  font-weight: 600;
+  color: rgba(0, 255, 65, 0.8);
+  font-size: 0.95rem;
+}
+
+.distribution-details .detail-row span {
+  color: #00ff88;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.distribution-details .amount {
+  color: #00ff41 !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+}
+
+.distribution-details .usd-value {
+  color: #00ff88 !important;
+  font-weight: 600 !important;
+  font-family: "Courier New", monospace !important;
+}
+
+.distribution-details .timestamp {
+  color: rgba(0, 255, 65, 0.7) !important;
+  font-size: 0.9rem !important;
+  font-style: italic;
+}
+
+/* Token Prices Section */
+.token-prices-section {
+  background: rgba(0, 255, 65, 0.06);
+  border-color: rgba(0, 255, 65, 0.35);
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.12);
+}
+
+.token-prices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.token-price-item {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 255, 65, 0.25);
+  box-shadow: 0 0 18px rgba(0, 255, 65, 0.08);
+}
+
+.token-price-item .token-header h5 {
+  margin: 0 0 1rem 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #00ff41;
+  text-shadow: 0 0 6px rgba(0, 255, 65, 0.5);
+  text-align: center;
+  padding: 0.6rem;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.price-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.price-details .detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.15);
+}
+
+.price-details .detail-row:last-child {
+  border-bottom: none;
+}
+
+.price-details .detail-row label {
+  font-weight: 600;
+  color: rgba(0, 255, 65, 0.75);
+  font-size: 0.9rem;
+}
+
+.price-details .detail-row span {
+  color: #00ff88;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.price-details .price {
+  color: #00ff41 !important;
+  font-weight: 700 !important;
+  font-size: 1.05rem !important;
+  font-family: "Courier New", monospace !important;
+}
+
+.price-details .source {
+  color: #00ff88 !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  font-size: 0.85rem !important;
+}
+
+.price-details .timestamp {
+  color: rgba(0, 255, 65, 0.65) !important;
+  font-size: 0.85rem !important;
+  font-style: italic;
+}
+
+.quote-info {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.quote-info .detail-row {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+}
+
+.quote-info .detail-row:last-child {
+  border-bottom: none;
+}
+
+.price-details .dex {
+  color: #00ff88 !important;
+  font-weight: 600 !important;
+  text-transform: capitalize;
+}
+
+.price-details .execution-time {
+  color: rgba(0, 255, 65, 0.8) !important;
+  font-weight: 500 !important;
+  font-family: "Courier New", monospace !important;
+}
+
+/* Calendar Section */
+.calendar-section {
+  background: rgba(0, 255, 65, 0.04);
+  border-color: rgba(0, 255, 65, 0.25);
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.08);
+}
+
+/* Weather Section */
+.weather-section {
+  background: rgba(0, 255, 65, 0.04);
+  border-color: rgba(0, 255, 65, 0.25);
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.08);
+  position: relative;
+}
+
+.set-location-button {
+  background: linear-gradient(135deg, #00ff41 0%, #00ff88 100%);
+  color: #000;
+  border: 1px solid #00ff41;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Courier New", monospace;
+}
+
+.set-location-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+}
+
+/* Set Location Overlay */
+.set-location-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  border-radius: 15px;
+}
+
+.set-button {
+  background: linear-gradient(135deg, #00ff41 0%, #00ff88 100%);
+  color: #000;
+  border: 1px solid #00ff41;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+}
+
+.set-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+}
+
+.set-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Date Header */
+.date-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(0, 255, 65, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.date-header h2 {
+  color: #00ff41;
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+  font-family: "Courier New", monospace;
+}
+
+/* Note Section */
+.note-section {
+  background: rgba(0, 255, 65, 0.04);
+  border-color: rgba(0, 255, 65, 0.25);
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.08);
+}
+
+.note-content {
+  margin-top: 1rem;
+}
+
+.note-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  color: #00ff41;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  resize: vertical;
+  min-height: 100px;
+  transition: all 0.3s ease;
+}
+
+.note-input:focus {
+  outline: none;
+  border-color: #00ff41;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+}
+
+.note-input::placeholder {
+  color: rgba(0, 255, 65, 0.5);
+}
+
+.update-note-button {
+  background: linear-gradient(135deg, #00ff41 0%, #00ff88 100%);
+  color: #000;
+  border: 1px solid #00ff41;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Courier New", monospace;
+}
+
+.update-note-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+}
+
+.update-note-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .manager-card,
+  .config-required {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+  }
+
+  .manager-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .manager-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .manager-actions {
+    justify-content: center;
+  }
+
+  .refresh-button,
+  .config-button {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    min-width: auto;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .balances-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .raw-portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .configure-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 300px;
+  }
+}

@@ -1,0 +1,231 @@
+.environment-config {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.config-card {
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(20px);
+  border: 2px solid #00ff41;
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.3),
+    inset 0 0 30px rgba(0, 255, 65, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.config-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 65, 0.1),
+    transparent
+  );
+  animation: scan 3s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.config-card h2 {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #00ff41;
+  text-shadow: 0 0 10px #00ff41;
+}
+
+.config-card p {
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  font-size: 1.1rem;
+  color: #00ff88;
+}
+
+.config-form {
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #00ff41;
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid rgba(0, 255, 65, 0.3);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #00ff41;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: "Courier New", monospace;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #00ff41;
+  box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.1), 0 0 20px rgba(0, 255, 65, 0.3);
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.form-group input.error {
+  border-color: #ff0000;
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1), 0 0 15px rgba(255, 0, 0, 0.3);
+}
+
+.form-group input::placeholder {
+  color: rgba(0, 255, 65, 0.5);
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: block;
+  text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+}
+
+.help-text {
+  color: rgba(0, 255, 65, 0.6);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+.config-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.save-button {
+  background: linear-gradient(135deg, #00ff41 0%, #00ff88 100%);
+  color: #000;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 150px;
+  border: 2px solid #00ff41;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+  font-family: "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.save-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 255, 65, 0.6), 0 0 30px rgba(0, 255, 65, 0.8);
+  background: linear-gradient(135deg, #00ff88 0%, #00ff41 100%);
+}
+
+.cancel-button {
+  background: rgba(0, 0, 0, 0.8);
+  color: #00ff41;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 150px;
+  border: 2px solid rgba(0, 255, 65, 0.3);
+  font-family: "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.cancel-button:hover {
+  background: rgba(0, 255, 65, 0.1);
+  border-color: #00ff41;
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+}
+
+.config-info {
+  background: rgba(0, 255, 65, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: left;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.config-info h3 {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #00ff41;
+}
+
+.config-info ul {
+  list-style: none;
+  margin-bottom: 1rem;
+}
+
+.config-info li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+  color: #00ff88;
+}
+
+.config-info li:last-child {
+  border-bottom: none;
+}
+
+.note {
+  background: rgba(0, 255, 65, 0.1);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 10px;
+  padding: 1rem;
+  color: #00ff88;
+  font-size: 0.9rem;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+}
+
+@media (max-width: 768px) {
+  .config-card {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+  }
+
+  .config-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .config-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .save-button,
+  .cancel-button {
+    width: 100%;
+    max-width: 300px;
+  }
+}
