@@ -37,8 +37,16 @@
 /* Current Weather Section */
 .current-weather-content {
   display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.current-weather-main-content {
+  display: flex;
   gap: 2rem;
   align-items: flex-start;
+  width: 100%;
 }
 
 .weather-main {
@@ -340,12 +348,20 @@
   border-radius: 6px;
   padding: 0.75rem;
   white-space: pre-wrap;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  width: 100%;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .current-weather-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .current-weather-main-content {
     flex-direction: column;
     gap: 1.5rem;
   }
@@ -480,13 +496,25 @@
   border-top: 1px solid rgba(0, 255, 65, 0.2);
 }
 
-
 .raw-weather-description h5 {
   color: #00ff41;
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   text-shadow: 0 0 8px rgba(0, 255, 65, 0.3);
+}
+
+.raw-weather-description .description-text {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  word-break: normal;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  padding: 1rem;
+  margin: 0;
 }
 
 .forecast-raw-description {

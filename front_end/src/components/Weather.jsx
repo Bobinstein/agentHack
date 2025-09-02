@@ -149,16 +149,18 @@ const Weather = ({ weatherData }) => {
     for (const line of lines) {
       // Try multiple patterns to match different AI response formats
       const patterns = [
-        // Pattern 1: "- **03:00** - Temperature: 293.19 K, Condition: Scattered clouds"
-        /- \*\*(\d{2}:\d{2})\*\* - Temperature: ([\d.]+) K, Condition: ([^,\n]+)/,
-        // Pattern 2: "**4 PM**: 296.82 K - Few clouds"
+        // Pattern 1: "**6:00 AM**: 288.46 K, Clear sky" (ACTUAL FORMAT FROM CONSOLE)
+        /\*\*(\d{1,2}:\d{2} (?:AM|PM))\*\*: ([\d.]+) K, ([^,\n]+)/,
+        // Pattern 2: "**6 AM**: 288.46 K, Clear sky" (without minutes)
+        /\*\*(\d{1,2} (?:AM|PM))\*\*: ([\d.]+) K, ([^,\n]+)/,
+        // Pattern 3: "**4 PM**: 296.82 K - Few clouds" (with dash)
         /\*\*(\d{1,2} (?:AM|PM))\*\*: ([\d.]+) K - ([^,\n]+)/,
-        // Pattern 3: "**12 PM**: 293.98 K - Few clouds"
+        // Pattern 4: "**12 PM**: 293.98 K - Few clouds" (with minutes and dash)
         /\*\*(\d{1,2}:\d{2} (?:AM|PM))\*\*: ([\d.]+) K - ([^,\n]+)/,
-        // Pattern 4: "**6 AM**: 292.35 K - Clear sky"
-        /\*\*(\d{1,2} (?:AM|PM))\*\*: ([\d.]+) K - ([^,\n]+)/,
-        // Pattern 5: More flexible time format
-        /\*\*([^*]+)\*\*: ([\d.]+) K - ([^,\n]+)/,
+        // Pattern 5: "- **03:00** - Temperature: 293.19 K, Condition: Scattered clouds"
+        /- \*\*(\d{2}:\d{2})\*\* - Temperature: ([\d.]+) K, Condition: ([^,\n]+)/,
+        // Pattern 6: More flexible time format
+        /\*\*([^*]+)\*\*: ([\d.]+) K, ([^,\n]+)/,
       ];
 
       for (const pattern of patterns) {
@@ -209,12 +211,13 @@ const Weather = ({ weatherData }) => {
     // This ensures something is always displayed when data exists
     return {
       temperature: null,
-      conditions: "See description below",
+      conditions: "Raw data available below",
       time: null,
       humidity: null,
       windSpeed: null,
       windDirection: null,
       rawDescription: description, // Include the raw description for display
+      isFallback: true, // Flag to indicate this is fallback data
     };
   };
 
@@ -283,8 +286,9 @@ const Weather = ({ weatherData }) => {
           date: "Current",
           high: null,
           low: null,
-          conditions: "See description below",
+          conditions: "Raw data available below",
           rawDescription: description,
+          isFallback: true,
         },
       ];
     }
@@ -312,6 +316,11 @@ const Weather = ({ weatherData }) => {
   const currentData = parseCurrentWeather(currentWeather?.description);
   const forecasts = parseDailyForecast(dailyForecast?.description);
 
+  // Debug logging
+  console.log("Weather render - currentData:", currentData);
+  console.log("Weather render - currentWeather:", currentWeather);
+  console.log("Weather render - forecasts:", forecasts);
+
   return (
     <div className="weather-container">
       {/* Current Weather Section */}
@@ -337,56 +346,59 @@ const Weather = ({ weatherData }) => {
             </div>
           ) : currentData ? (
             <>
-              <div className="weather-main">
-                <div className="weather-icon">🌤️</div>
-                <div className="weather-details">
-                  {currentData.temperature ? (
-                    <div className="temperature">
-                      {currentData.temperature} K
+
+              <div className="current-weather-main-content">
+                <div className="weather-main">
+                  <div className="weather-icon">🌤️</div>
+                  <div className="weather-details">
+                    {currentData.temperature ? (
+                      <div className="temperature">
+                        {currentData.temperature} K
+                      </div>
+                    ) : (
+                      <div className="temperature">-- K</div>
+                    )}
+                    <div className="conditions">
+                      {currentData.conditions || "Unknown conditions"}
                     </div>
-                  ) : (
-                    <div className="temperature">-- K</div>
-                  )}
-                  <div className="conditions">
-                    {currentData.conditions || "Unknown conditions"}
+                    {currentData.time && (
+                      <div className="weather-time">{currentData.time}</div>
+                    )}
+                    <div className="location">{getCurrentLocation()}</div>
                   </div>
-                  {currentData.time && (
-                    <div className="weather-time">{currentData.time}</div>
+                </div>
+                <div className="weather-metrics">
+                  {currentData.humidity && (
+                    <div className="metric">
+                      <label>Humidity:</label>
+                      <span>{currentData.humidity}%</span>
+                    </div>
                   )}
-                  <div className="location">{getCurrentLocation()}</div>
+                  {currentData.windSpeed && (
+                    <div className="metric">
+                      <label>Wind:</label>
+                      <span>{currentData.windSpeed} m/s</span>
+                    </div>
+                  )}
+                  {currentData.windDirection && (
+                    <div className="metric">
+                      <label>Direction:</label>
+                      <span>{currentData.windDirection}</span>
+                    </div>
+                  )}
+                  <div className="metric">
+                    <label>Last Updated:</label>
+                    <span>{formatTimestamp(currentWeather?.timestamp)}</span>
+                  </div>
+                  {lastRefresh && (
+                    <div className="metric">
+                      <label>UI Refreshed:</label>
+                      <span>{lastRefresh.toLocaleTimeString()}</span>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="weather-metrics">
-                {currentData.humidity && (
-                  <div className="metric">
-                    <label>Humidity:</label>
-                    <span>{currentData.humidity}%</span>
-                  </div>
-                )}
-                {currentData.windSpeed && (
-                  <div className="metric">
-                    <label>Wind:</label>
-                    <span>{currentData.windSpeed} m/s</span>
-                  </div>
-                )}
-                {currentData.windDirection && (
-                  <div className="metric">
-                    <label>Direction:</label>
-                    <span>{currentData.windDirection}</span>
-                  </div>
-                )}
-                <div className="metric">
-                  <label>Last Updated:</label>
-                  <span>{formatTimestamp(currentWeather?.timestamp)}</span>
-                </div>
-                {lastRefresh && (
-                  <div className="metric">
-                    <label>UI Refreshed:</label>
-                    <span>{lastRefresh.toLocaleTimeString()}</span>
-                  </div>
-                )}
-              </div>
-              {/* Show raw description when parsing fails */}
+              {/* Show raw description when parsing fails or when explicitly requested */}
               {currentData.rawDescription && (
                 <div className="raw-weather-description">
                   <h5>Raw Weather Data:</h5>
