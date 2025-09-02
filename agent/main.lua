@@ -327,7 +327,7 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
         local requestType = msg.Tags["X-Request-Type"]
         local location = msg.Tags["X-Location"]
 
-        if requestType == "hourly" or requestType == "daily" then
+        if requestType == "hourly" or requestType == "daily" or requestType == "forecast" then
             print("🌤️ Processing " .. requestType .. " weather response for: " .. location)
 
             -- Handle nested data structure from relay response
@@ -355,6 +355,8 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
                         cacheType = "hourly" -- Keep as hourly for the cache
                     elseif requestType == "daily" then
                         cacheType = "daily"  -- Keep as daily for the cache
+                    elseif requestType == "forecast" then
+                        cacheType = "daily"  -- Map forecast to daily cache
                     end
 
                     setCachedWeather(location, cacheType, weatherData)

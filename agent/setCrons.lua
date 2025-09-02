@@ -50,6 +50,7 @@ local crons = {
         ["XTags"] = {
             ["X-Request-Type"] = "hourly",
         }
+        
     },
 
     ["set-daily-weather"] = {
