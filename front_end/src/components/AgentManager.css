@@ -777,6 +777,83 @@
   background: rgba(0, 255, 65, 0.04);
   border-color: rgba(0, 255, 65, 0.25);
   box-shadow: 0 0 25px rgba(0, 255, 65, 0.08);
+  position: relative;
+}
+
+.add-event-button {
+  background: linear-gradient(135deg, #00ff41 0%, #00ff88 100%);
+  color: #000;
+  border: 1px solid #00ff41;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Courier New", monospace;
+}
+
+.add-event-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+}
+
+/* Add Event Overlay */
+.add-event-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  border-radius: 15px;
+}
+
+/* Enhanced Input Groups for Event Form */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin: 0;
+}
+
+select {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: #00ff41;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: #00ff41;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+}
+
+select option {
+  background: #000;
+  color: #00ff41;
 }
 
 /* Weather Section */

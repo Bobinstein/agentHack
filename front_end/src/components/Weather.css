@@ -22,6 +22,18 @@
   padding-bottom: 0.5rem;
 }
 
+/* Weather Section Header */
+.weather-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.weather-section-header h4 {
+  margin: 0;
+}
+
 /* Current Weather Section */
 .current-weather-content {
   display: flex;

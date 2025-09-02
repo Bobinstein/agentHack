@@ -19,6 +19,18 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
   const [noteContent, setNoteContent] = useState("");
   const [originalNote, setOriginalNote] = useState("");
   const [updatingNote, setUpdatingNote] = useState(false);
+  const [showAddEvent, setShowAddEvent] = useState(false);
+  const [newEvent, setNewEvent] = useState({
+    eventName: "",
+    startTime: "",
+    endTime: "",
+    isAllDay: false,
+    description: "",
+    eventType: "general",
+    location: "",
+    priority: "medium",
+  });
+  const [addingEvent, setAddingEvent] = useState(false);
 
   const handleAddToken = async () => {
     if (!newTokenId.trim() || !envVars.AGENT_PROCESS_ID) return;
@@ -125,6 +137,75 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
       setError("Failed to update note: " + (err.message || "Unknown error"));
     } finally {
       setUpdatingNote(false);
+    }
+  };
+
+  const handleAddEvent = async () => {
+    if (
+      !newEvent.eventName.trim() ||
+      !newEvent.startTime ||
+      !envVars.AGENT_PROCESS_ID
+    )
+      return;
+
+    setAddingEvent(true);
+    setError(null);
+
+    try {
+      // Create data item signer using window.arweaveWallet
+      const signer = createDataItemSigner(window.arweaveWallet);
+
+      // Convert dates to milliseconds if they're not already
+      const startTime =
+        typeof newEvent.startTime === "string"
+          ? new Date(newEvent.startTime).getTime()
+          : newEvent.startTime;
+      const endTime = newEvent.endTime
+        ? typeof newEvent.endTime === "string"
+          ? new Date(newEvent.endTime).getTime()
+          : newEvent.endTime
+        : startTime;
+
+      // Send message to add calendar event
+      const txId = await message({
+        process: envVars.AGENT_PROCESS_ID,
+        tags: [
+          { name: "Action", value: "add-event" },
+          { name: "Event-Name", value: newEvent.eventName.trim() },
+          { name: "Start-Time", value: startTime.toString() },
+          { name: "End-Time", value: endTime.toString() },
+          { name: "Is-All-Day", value: newEvent.isAllDay.toString() },
+          { name: "Description", value: newEvent.description.trim() },
+          { name: "Event-Type", value: newEvent.eventType },
+          { name: "Location", value: newEvent.location.trim() },
+          { name: "Priority", value: newEvent.priority },
+        ],
+        signer: signer,
+        data: "Add Calendar Event",
+      });
+
+      console.log("Event added successfully:", txId);
+
+      // Close modal and reset form
+      setShowAddEvent(false);
+      setNewEvent({
+        eventName: "",
+        startTime: "",
+        endTime: "",
+        isAllDay: false,
+        description: "",
+        eventType: "general",
+        location: "",
+        priority: "medium",
+      });
+
+      // Refresh agent data to show the new event
+      await getAgentData();
+    } catch (err) {
+      console.error("Failed to add event:", err);
+      setError("Failed to add event: " + (err.message || "Unknown error"));
+    } finally {
+      setAddingEvent(false);
     }
   };
 
@@ -446,7 +527,180 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
         {/* Calendar Section */}
         {parsedData.calendar && (
           <div className="data-section calendar-section">
-            <h4>Calendar</h4>
+            <div className="section-header">
+              <h4>Calendar</h4>
+              <button
+                className="add-event-button"
+                onClick={() => setShowAddEvent(true)}
+              >
+                + Add Event
+              </button>
+            </div>
+
+            {/* Add Event Modal */}
+            {showAddEvent && (
+              <div className="add-event-overlay">
+                <div className="overlay-content">
+                  <h5>Add Calendar Event</h5>
+
+                  <div className="input-group">
+                    <label htmlFor="eventName">Event Name *:</label>
+                    <input
+                      id="eventName"
+                      type="text"
+                      value={newEvent.eventName}
+                      onChange={(e) =>
+                        setNewEvent({ ...newEvent, eventName: e.target.value })
+                      }
+                      placeholder="Enter event name"
+                      disabled={addingEvent}
+                    />
+                  </div>
+
+                  <div className="input-group">
+                    <label htmlFor="startTime">Start Time *:</label>
+                    <input
+                      id="startTime"
+                      type="datetime-local"
+                      value={newEvent.startTime}
+                      onChange={(e) =>
+                        setNewEvent({ ...newEvent, startTime: e.target.value })
+                      }
+                      disabled={addingEvent}
+                    />
+                  </div>
+
+                  <div className="input-group">
+                    <label htmlFor="endTime">End Time:</label>
+                    <input
+                      id="endTime"
+                      type="datetime-local"
+                      value={newEvent.endTime}
+                      onChange={(e) =>
+                        setNewEvent({ ...newEvent, endTime: e.target.value })
+                      }
+                      disabled={addingEvent}
+                    />
+                  </div>
+
+                  <div className="input-group checkbox-group">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={newEvent.isAllDay}
+                        onChange={(e) =>
+                          setNewEvent({
+                            ...newEvent,
+                            isAllDay: e.target.checked,
+                          })
+                        }
+                        disabled={addingEvent}
+                      />
+                      All Day Event
+                    </label>
+                  </div>
+
+                  <div className="input-group">
+                    <label htmlFor="description">Description:</label>
+                    <textarea
+                      id="description"
+                      value={newEvent.description}
+                      onChange={(e) =>
+                        setNewEvent({
+                          ...newEvent,
+                          description: e.target.value,
+                        })
+                      }
+                      placeholder="Enter event description"
+                      rows={3}
+                      disabled={addingEvent}
+                    />
+                  </div>
+
+                  <div className="input-group">
+                    <label htmlFor="eventType">Event Type:</label>
+                    <select
+                      id="eventType"
+                      value={newEvent.eventType}
+                      onChange={(e) =>
+                        setNewEvent({ ...newEvent, eventType: e.target.value })
+                      }
+                      disabled={addingEvent}
+                    >
+                      <option value="general">General</option>
+                      <option value="meeting">Meeting</option>
+                      <option value="appointment">Appointment</option>
+                      <option value="reminder">Reminder</option>
+                      <option value="deadline">Deadline</option>
+                    </select>
+                  </div>
+
+                  <div className="input-group">
+                    <label htmlFor="location">Location:</label>
+                    <input
+                      id="location"
+                      type="text"
+                      value={newEvent.location}
+                      onChange={(e) =>
+                        setNewEvent({ ...newEvent, location: e.target.value })
+                      }
+                      placeholder="Enter event location"
+                      disabled={addingEvent}
+                    />
+                  </div>
+
+                  <div className="input-group">
+                    <label htmlFor="priority">Priority:</label>
+                    <select
+                      id="priority"
+                      value={newEvent.priority}
+                      onChange={(e) =>
+                        setNewEvent({ ...newEvent, priority: e.target.value })
+                      }
+                      disabled={addingEvent}
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+
+                  <div className="modal-actions">
+                    <button
+                      className="cancel-button"
+                      onClick={() => {
+                        setShowAddEvent(false);
+                        setNewEvent({
+                          eventName: "",
+                          startTime: "",
+                          endTime: "",
+                          isAllDay: false,
+                          description: "",
+                          eventType: "general",
+                          location: "",
+                          priority: "medium",
+                        });
+                      }}
+                      disabled={addingEvent}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="add-button"
+                      onClick={handleAddEvent}
+                      disabled={
+                        !newEvent.eventName.trim() ||
+                        !newEvent.startTime ||
+                        addingEvent
+                      }
+                    >
+                      {addingEvent ? "Adding..." : "Add Event"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <Calendar calendarData={parsedData.calendar} />
           </div>
         )}

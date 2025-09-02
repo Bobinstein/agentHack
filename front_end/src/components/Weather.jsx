@@ -13,16 +13,16 @@ const Weather = ({ weatherData }) => {
         setDefaultLocation(weatherData.moduleData.defaultLocation);
       }
 
-      // Get current weather from the cache (same as emails.lua)
-      if (weatherData.completeCache && weatherData.completeCache.current) {
-        const currentKey = defaultLocation + "_current";
-        const currentData = weatherData.completeCache.current[currentKey];
-        if (currentData) {
-          setCurrentWeather(currentData);
+      // Get current weather from the hourly cache (hourly is our "current" weather)
+      if (weatherData.completeCache && weatherData.completeCache.hourly) {
+        const hourlyKey = defaultLocation + "_hourly";
+        const hourlyData = weatherData.completeCache.hourly[hourlyKey];
+        if (hourlyData) {
+          setCurrentWeather(hourlyData);
         }
       }
 
-      // Get daily forecast from the cache (same as emails.lua)
+      // Get daily forecast from the daily cache
       if (weatherData.completeCache && weatherData.completeCache.daily) {
         const dailyKey = defaultLocation + "_daily";
         const dailyData = weatherData.completeCache.daily[dailyKey];
@@ -131,7 +131,9 @@ const Weather = ({ weatherData }) => {
       {/* Current Weather Section */}
       {currentData && (
         <div className="weather-section current-weather">
-          <h4>Current Weather - {defaultLocation}</h4>
+          <div className="weather-section-header">
+            <h4>Current Weather - {defaultLocation}</h4>
+          </div>
           <div className="current-weather-content">
             <div className="weather-main">
               <div className="weather-icon">🌤️</div>

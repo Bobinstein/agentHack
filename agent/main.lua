@@ -312,7 +312,91 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
             return
         end
 
-        -- For non-custom weather requests, the shared function already handles everything
+        -- Handle regular weather requests (hourly and daily)
+        local requestType = msg.Tags["X-Request-Type"]
+        local location = msg.Tags["X-Location"]
+
+        if requestType == "hourly" or requestType == "daily" then
+            print("🌤️ Processing " .. requestType .. " weather response for: " .. location)
+
+            if success and parsedData.answer then
+                print("  AI Weather Assistant Response received")
+                print("  Answer length: " .. #parsedData.answer .. " characters")
+
+                -- Cache the weather response
+                if setCachedWeather then
+                    local weatherData = {
+                        timestamp = os.time(),
+                        description = parsedData.answer,
+                        source = "ai-assistant",
+                        session_id = parsedData.session_id
+                    }
+
+                    -- Use the correct cache type mapping
+                    local cacheType = requestType
+                    if requestType == "hourly" then
+                        cacheType = "hourly" -- Keep as hourly for the cache
+                    elseif requestType == "daily" then
+                        cacheType = "daily"  -- Keep as daily for the cache
+                    end
+
+                    setCachedWeather(location, cacheType, weatherData)
+                    print("💾 Weather data cached for: " .. location .. " (" .. cacheType .. ")")
+                else
+                    print("⚠️ setCachedWeather function not available")
+                end
+
+                -- Send response back to requestor if not a cron job
+                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= "crontroller" then
+                    ao.send({
+                        Target = msg.Tags["X-Requestor"],
+                        Action = requestType .. "-weather-updated",
+                        Location = location,
+                        Data = parsedData.answer,
+                        Status = "success"
+                    })
+                    print("📤 Weather response sent to requestor: " .. msg.Tags["X-Requestor"])
+                else
+                    print("🕐 Cron job: " .. requestType .. " weather cache updated silently")
+                end
+            elseif success and parsedData.error then
+                print("  AI Weather Assistant Error: " .. tostring(parsedData.error))
+
+                -- Send error response back to requestor if not a cron job
+                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= "crontroller" then
+                    ao.send({
+                        Target = msg.Tags["X-Requestor"],
+                        Action = requestType .. "-weather-error",
+                        Location = location,
+                        Error = parsedData.error,
+                        Status = "error"
+                    })
+                    print("📤 Error response sent to requestor: " .. msg.Tags["X-Requestor"])
+                else
+                    print("🕐 Cron job: " .. requestType .. " weather error handled silently")
+                end
+            else
+                print("  Unexpected response format: " .. json.encode(parsedData))
+
+                -- Send generic response back to requestor if not a cron job
+                if msg.Tags["X-Requestor"] and msg.Tags["X-Requestor"] ~= "crontroller" then
+                    ao.send({
+                        Target = msg.Tags["X-Requestor"],
+                        Action = requestType .. "-weather-updated",
+                        Location = location,
+                        Data = "Received weather data but format was unexpected",
+                        RawData = json.encode(parsedData),
+                        Status = "partial"
+                    })
+                    print("📤 Partial response sent to requestor: " .. msg.Tags["X-Requestor"])
+                else
+                    print("🕐 Cron job: " .. requestType .. " weather partial response handled silently")
+                end
+            end
+            return
+        end
+
+        -- For other weather requests, the shared function already handles everything
         return
     end
 
@@ -560,10 +644,10 @@ Handlers.add("get-daily-summary",
 
         -- 5. Complete Weather Data (ALL cache data)
         completeData.weather = {}
-        local defaultLocation = "Little France, NY"
+        local defaultLocation = "New York City, NY" -- Fallback default
 
         if weather then
-            defaultLocation = weather.defaultLocation or "Little France, NY"
+            defaultLocation = weather.defaultLocation or "New York City, NY"
             completeData.weather.location = defaultLocation
             completeData.weather.moduleData = sanitizeTable(weather)
 

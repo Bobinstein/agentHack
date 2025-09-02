@@ -5,6 +5,8 @@ const Calendar = ({ calendarData }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState("weekly"); // daily, weekly, monthly
   const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showEventModal, setShowEventModal] = useState(false);
 
   useEffect(() => {
     if (
@@ -59,8 +61,42 @@ const Calendar = ({ calendarData }) => {
   const getDayEvents = (date) => {
     return events.filter((event) => {
       const eventDate = new Date(event.startTime);
-      return eventDate.toDateString() === date.toDateString();
+      const eventEndDate = new Date(event.endTime);
+
+      // Check if the date falls within the event's time range
+      const dateStart = new Date(date);
+      dateStart.setHours(0, 0, 0, 0);
+
+      const dateEnd = new Date(date);
+      dateEnd.setHours(23, 59, 59, 999);
+
+      const eventStart = new Date(eventDate);
+      eventStart.setHours(0, 0, 0, 0);
+
+      const eventEnd = new Date(eventEndDate);
+      eventEnd.setHours(23, 59, 59, 999);
+
+      // Event overlaps with this date if:
+      // - Event starts on or before this date AND
+      // - Event ends on or after this date
+      return eventStart <= dateEnd && eventEnd >= dateStart;
     });
+  };
+
+  const getEventDisplayInfo = (event, date) => {
+    const eventStart = new Date(event.startTime);
+    const eventEnd = new Date(event.endTime);
+    const dateStart = new Date(date);
+    dateStart.setHours(0, 0, 0, 0);
+
+    const isFirstDay = eventStart.toDateString() === date.toDateString();
+    const isLastDay = eventEnd.toDateString() === date.toDateString();
+
+    return {
+      isFirstDay,
+      isLastDay,
+      isMultiDay: eventStart.toDateString() !== eventEnd.toDateString(),
+    };
   };
 
   const getTimeString = (date) => {
@@ -112,23 +148,53 @@ const Calendar = ({ calendarData }) => {
           {weekDates.map((date, dayIndex) => (
             <div key={dayIndex} className="week-day">
               <div className="day-events">
-                {getDayEvents(date).map((event, eventIndex) => (
-                  <div
-                    key={eventIndex}
-                    className="calendar-event"
-                    style={{
-                      backgroundColor: getEventColor(event.eventType),
-                      borderColor: getEventColor(event.eventType),
-                    }}
-                  >
-                    <div className="event-time">
-                      {getTimeString(event.startTime)} -{" "}
-                      {getTimeString(event.endTime)}
+                {getDayEvents(date).map((event, eventIndex) => {
+                  const displayInfo = getEventDisplayInfo(event, date);
+
+                  // For single-day events, only show on their start date
+                  // For multi-day events, show on all relevant dates
+                  if (!displayInfo.isMultiDay && !displayInfo.isFirstDay) {
+                    return null;
+                  }
+
+                  return (
+                    <div
+                      key={eventIndex}
+                      className={`calendar-event clickable ${
+                        displayInfo.isMultiDay
+                          ? "multi-day-event"
+                          : "single-day-event"
+                      }`}
+                      style={{
+                        backgroundColor: getEventColor(event.eventType),
+                        borderColor: getEventColor(event.eventType),
+                      }}
+                      onClick={() => handleEventClick(event)}
+                    >
+                      <div className="event-time">
+                        {displayInfo.isFirstDay
+                          ? getTimeString(event.startTime)
+                          : ""}{" "}
+                        -{" "}
+                        {displayInfo.isLastDay
+                          ? getTimeString(event.endTime)
+                          : ""}
+                        {!displayInfo.isFirstDay &&
+                          !displayInfo.isLastDay &&
+                          "All Day"}
+                      </div>
+                      <div className="event-name">{event.eventName}</div>
+                      {event.location && (
+                        <div className="event-location">{event.location}</div>
+                      )}
+                      {event.description && (
+                        <div className="event-description">
+                          {event.description}
+                        </div>
+                      )}
                     </div>
-                    <div className="event-name">{event.eventName}</div>
-                    <div className="event-location">{event.location}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -159,18 +225,26 @@ const Calendar = ({ calendarData }) => {
                   {hourEvents.map((event, index) => (
                     <div
                       key={index}
-                      className="calendar-event daily-event"
+                      className="calendar-event daily-event clickable"
                       style={{
                         backgroundColor: getEventColor(event.eventType),
                         borderColor: getEventColor(event.eventType),
                       }}
+                      onClick={() => handleEventClick(event)}
                     >
                       <div className="event-time">
                         {getTimeString(event.startTime)} -{" "}
                         {getTimeString(event.endTime)}
                       </div>
                       <div className="event-name">{event.eventName}</div>
-                      <div className="event-location">{event.location}</div>
+                      {event.location && (
+                        <div className="event-location">{event.location}</div>
+                      )}
+                      {event.description && (
+                        <div className="event-description">
+                          {event.description}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -213,13 +287,22 @@ const Calendar = ({ calendarData }) => {
                   {dayEvents.slice(0, 2).map((event, eventIndex) => (
                     <div
                       key={eventIndex}
-                      className="calendar-event month-event"
+                      className="calendar-event month-event clickable"
                       style={{
                         backgroundColor: getEventColor(event.eventType),
                         borderColor: getEventColor(event.eventType),
                       }}
+                      onClick={() => handleEventClick(event)}
                     >
                       <div className="event-name">{event.eventName}</div>
+                      {event.location && (
+                        <div className="event-location">{event.location}</div>
+                      )}
+                      {event.description && (
+                        <div className="event-description">
+                          {event.description}
+                        </div>
+                      )}
                     </div>
                   ))}
                   {dayEvents.length > 2 && (
@@ -245,6 +328,16 @@ const Calendar = ({ calendarData }) => {
       default: "#00ff41",
     };
     return colors[eventType] || colors.default;
+  };
+
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
+    setShowEventModal(true);
+  };
+
+  const closeEventModal = () => {
+    setShowEventModal(false);
+    setSelectedEvent(null);
   };
 
   const renderCalendar = () => {
@@ -323,6 +416,80 @@ const Calendar = ({ calendarData }) => {
           Timezone: {calendarData.timezone || "Unknown"}
         </div>
       </div>
+
+      {/* Event Detail Modal */}
+      {showEventModal && selectedEvent && (
+        <div className="event-modal-overlay" onClick={closeEventModal}>
+          <div
+            className="event-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="event-modal-header">
+              <h3>{selectedEvent.eventName}</h3>
+              <button className="close-button" onClick={closeEventModal}>
+                ×
+              </button>
+            </div>
+
+            <div className="event-modal-body">
+              <div className="event-detail-row">
+                <label>Time:</label>
+                <span>
+                  {getTimeString(selectedEvent.startTime)} -{" "}
+                  {getTimeString(selectedEvent.endTime)}
+                </span>
+              </div>
+
+              <div className="event-detail-row">
+                <label>Date:</label>
+                <span>{selectedEvent.startTime.toLocaleDateString()}</span>
+              </div>
+
+              {selectedEvent.location && (
+                <div className="event-detail-row">
+                  <label>Location:</label>
+                  <span>{selectedEvent.location}</span>
+                </div>
+              )}
+
+              {selectedEvent.description && (
+                <div className="event-detail-row">
+                  <label>Description:</label>
+                  <span className="event-description-full">
+                    {selectedEvent.description}
+                  </span>
+                </div>
+              )}
+
+              <div className="event-detail-row">
+                <label>Type:</label>
+                <span
+                  className="event-type-badge"
+                  style={{
+                    backgroundColor: getEventColor(selectedEvent.eventType),
+                  }}
+                >
+                  {selectedEvent.eventType}
+                </span>
+              </div>
+
+              <div className="event-detail-row">
+                <label>Priority:</label>
+                <span
+                  className={`priority-badge priority-${selectedEvent.priority}`}
+                >
+                  {selectedEvent.priority}
+                </span>
+              </div>
+
+              <div className="event-detail-row">
+                <label>Created:</label>
+                <span>{selectedEvent.createdAt.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

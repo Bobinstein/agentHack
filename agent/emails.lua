@@ -144,11 +144,11 @@ Handlers.add("cron-daily-email",
 
         -- Gather weather information for default location
         local weatherInfo = {}
-        local defaultLocation = "Little France, NY" -- Default fallback
+        local defaultLocation = "New York City, NY" -- Default fallback
 
         -- Use the global weather table directly (not module exports)
         if weather then
-            defaultLocation = weather.defaultLocation or "Little France, NY"
+            defaultLocation = weather.defaultLocation or "New York City, NY"
 
             -- Access the actual weather cache directly
             if weatherCache then
