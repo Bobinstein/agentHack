@@ -890,8 +890,8 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
 
         {renderAgentData()}
 
-        {/* Debug Section */}
-        {parsedData && (
+        {/* Debug Section - Commented out for cleaner UI */}
+        {/* {parsedData && (
           <div className="debug-section">
             <details>
               <summary>🔍 Debug: Raw Agent Response Data</summary>
@@ -900,7 +900,7 @@ const AgentManager = ({ walletAddress, envVars, onShowEnvConfig }) => {
               </div>
             </details>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
