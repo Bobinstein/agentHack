@@ -808,7 +808,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
         BREVO_API_KEY
       );
       totalReplacements++;
-      console.log("    🔑 Replaced Brevo API key in URL");
     }
 
     if (config.url.includes(OPENWEATHER_API_KEY_PLACEHOLDER)) {
@@ -823,7 +822,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
         OPENWEATHER_API_KEY
       );
       totalReplacements++;
-      console.log("    🌤️ Replaced OpenWeather API key in URL");
     }
 
     if (config.url.includes(EMAIL_TO_ADDRESS_PLACEHOLDER)) {
@@ -835,7 +833,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
         EMAIL_TO_ADDRESS
       );
       totalReplacements++;
-      console.log("    📧 Replaced email address in URL");
     }
 
     if (config.url.includes(EMAIL_TO_NAME_PLACEHOLDER)) {
@@ -847,7 +844,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
         EMAIL_TO_NAME
       );
       totalReplacements++;
-      console.log("    👤 Replaced email name in URL");
     }
 
     if (config.url.includes(EMAIL_SENDER_ADDRESS_PLACEHOLDER)) {
@@ -862,7 +858,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
         EMAIL_SENDER_ADDRESS
       );
       totalReplacements++;
-      console.log("    📤 Replaced sender email address in URL");
     }
 
     // Replace in headers
@@ -877,7 +872,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
             BREVO_API_KEY
           );
           totalReplacements++;
-          console.log(`    🔑 Replaced Brevo API key in header: ${key}`);
         }
 
         if (value.includes(OPENWEATHER_API_KEY_PLACEHOLDER)) {
@@ -892,7 +886,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
             OPENWEATHER_API_KEY
           );
           totalReplacements++;
-          console.log(`    🌤️ Replaced OpenWeather API key in header: ${key}`);
         }
 
         if (value.includes(EMAIL_TO_ADDRESS_PLACEHOLDER)) {
@@ -907,7 +900,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
             EMAIL_TO_ADDRESS
           );
           totalReplacements++;
-          console.log(`    📧 Replaced email address in header: ${key}`);
         }
 
         if (value.includes(EMAIL_TO_NAME_PLACEHOLDER)) {
@@ -919,7 +911,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
             EMAIL_TO_NAME
           );
           totalReplacements++;
-          console.log(`    👤 Replaced email name in header: ${key}`);
         }
 
         if (value.includes(EMAIL_SENDER_ADDRESS_PLACEHOLDER)) {
@@ -934,7 +925,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
             EMAIL_SENDER_ADDRESS
           );
           totalReplacements++;
-          console.log(`    📤 Replaced sender email address in header: ${key}`);
         }
       }
     }
@@ -1007,7 +997,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           BREVO_API_KEY
         );
         totalReplacements++;
-        console.log("    🔑 Replaced Brevo API key in request body");
       }
 
       if (config.data.includes(OPENWEATHER_API_KEY_PLACEHOLDER)) {
@@ -1022,7 +1011,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           OPENWEATHER_API_KEY
         );
         totalReplacements++;
-        console.log("    🌤️ Replaced OpenWeather API key in request body");
       }
 
       if (config.data.includes(EMAIL_TO_ADDRESS_PLACEHOLDER)) {
@@ -1034,7 +1022,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           EMAIL_TO_ADDRESS
         );
         totalReplacements++;
-        console.log("    📧 Replaced email address in request body");
       }
 
       if (config.data.includes(EMAIL_TO_NAME_PLACEHOLDER)) {
@@ -1046,7 +1033,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           EMAIL_TO_NAME
         );
         totalReplacements++;
-        console.log("    👤 Replaced email name in request body");
       }
 
       if (config.data.includes(EMAIL_SENDER_ADDRESS_PLACEHOLDER)) {
@@ -1061,7 +1047,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           EMAIL_SENDER_ADDRESS
         );
         totalReplacements++;
-        console.log("    📤 Replaced sender email address in request body");
       }
     }
 
@@ -1080,7 +1065,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           )
         );
         totalReplacements++;
-        console.log("    🔑 Replaced Brevo API key in JSON body object");
       }
 
       if (dataStr.includes(OPENWEATHER_API_KEY_PLACEHOLDER)) {
@@ -1097,7 +1081,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           )
         );
         totalReplacements++;
-        console.log("    🌤️ Replaced OpenWeather API key in JSON body object");
       }
 
       if (dataStr.includes(EMAIL_TO_ADDRESS_PLACEHOLDER)) {
@@ -1114,7 +1097,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           )
         );
         totalReplacements++;
-        console.log("    📧 Replaced email address in JSON body object");
       }
 
       if (dataStr.includes(EMAIL_TO_NAME_PLACEHOLDER)) {
@@ -1128,7 +1110,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           )
         );
         totalReplacements++;
-        console.log("    👤 Replaced email name in JSON body object");
       }
 
       if (dataStr.includes(EMAIL_SENDER_ADDRESS_PLACEHOLDER)) {
@@ -1145,7 +1126,6 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
           )
         );
         totalReplacements++;
-        console.log("    📤 Replaced sender email address in JSON body object");
       }
     }
 
@@ -1209,32 +1189,8 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
       }
     }
 
-    console.log("Final axios config:", {
-      method: config.method,
-      url: config.url,
-      headers: config.headers,
-      hasData: !!config.data,
-      dataType: typeof config.data,
-      isWeb3Form: isWeb3Form || false,
-      isBrevoApi: isBrevoApi || false,
-    });
-
     // Make the HTTP request
-    console.log(`    🚀 Making axios request...`);
     const response = await axios(config);
-    console.log(`    ✅ Axios request completed successfully`);
-
-    // Log response details prominently
-    console.log(`    📡 Response: ${response.status} ${response.statusText}`);
-    console.log(
-      `    📊 Data: ${
-        response.data
-          ? typeof response.data === "string"
-            ? response.data.length
-            : JSON.stringify(response.data).length
-          : 0
-      } bytes`
-    );
 
     // Always show status code prominently for non-200 responses
     if (response.status !== 200) {
@@ -1299,19 +1255,8 @@ async function makeHttpRequest(url, method, headers, body, timeout, postData) {
     // Log any non-success responses prominently
     if (!isSuccess) {
       console.log(
-        `    ⚠️ HTTP Error: ${response.status} ${response.statusText}`
+        `    ⚠️ HTTP Error: ${response.status} ${response.statusText} - ${config.method} ${config.url}`
       );
-      console.log(`    🔍 URL: ${config.url}`);
-      console.log(`    📋 Method: ${config.method}`);
-      if (response.data) {
-        const errorData =
-          typeof response.data === "string"
-            ? response.data.substring(0, 200)
-            : JSON.stringify(response.data);
-        console.log(
-          `    📝 Error: ${errorData}${errorData.length >= 200 ? "..." : ""}`
-        );
-      }
     }
 
     return {
@@ -1844,10 +1789,7 @@ async function executeGraphQLQuery(query, variables = {}) {
 
   // Try Goldsky first (faster)
   try {
-    console.log("    🔍 Trying Goldsky GraphQL endpoint (primary)...");
     const requestData = JSON.stringify({ query, variables });
-    console.log(`    📤 Query: ${query.substring(0, 100)}...`);
-    console.log(`    📤 Variables: ${JSON.stringify(variables)}`);
     const response = await makeHttpsRequest(
       GOLDSKY_PRIMARY_ENDPOINT,
       requestData
@@ -1863,10 +1805,7 @@ async function executeGraphQLQuery(query, variables = {}) {
       throw new Error(`Goldsky GraphQL errors: ${JSON.stringify(data.errors)}`);
     }
 
-    console.log("    ✅ Goldsky query successful");
-    console.log(
-      `    📥 Response data: ${JSON.stringify(data).substring(0, 200)}...`
-    );
+    // Goldsky query successful
     return data;
   } catch (goldskyError) {
     console.log(`    ⚠️ Goldsky failed: ${goldskyError.message}`);
@@ -1894,7 +1833,7 @@ async function executeGraphQLQuery(query, variables = {}) {
         );
       }
 
-      console.log("    ✅ Arweave.net fallback successful");
+      // Arweave.net fallback successful
       return fallbackData;
     } catch (fallbackError) {
       throw new Error(
@@ -1914,9 +1853,7 @@ async function executeGraphQLQuery(query, variables = {}) {
  */
 async function checkForNewMessages(db, message, signer) {
   try {
-    console.log(
-      `\n🔍 [${new Date().toISOString()}] Checking for new messages...`
-    );
+    // Checking for new messages...
 
     // Skip GraphQL if we've had too many consecutive failures (circuit breaker)
     if (consecutiveGraphQLFailures >= MAX_GRAPHQL_FAILURES) {
@@ -1937,9 +1874,6 @@ async function checkForNewMessages(db, message, signer) {
     }
 
     const query = getSuccessMessagesQuery();
-    console.log(
-      `    🔍 Executing GraphQL query for process: ${MOCK_RELAY_PROCESS_ID}`
-    );
 
     // First, let's check if there are ANY transactions from this process
     const broadQuery = `
@@ -1964,23 +1898,7 @@ async function checkForNewMessages(db, message, signer) {
       }
     `;
 
-    console.log("    🔍 Checking for ANY transactions from this process...");
     const broadData = await executeGraphQLQuery(broadQuery);
-
-    if (broadData.data.transactions.edges.length > 0) {
-      console.log(
-        `    📊 Found ${broadData.data.transactions.edges.length} transactions from process`
-      );
-      console.log("    📋 Sample transaction tags:");
-      broadData.data.transactions.edges.slice(0, 3).forEach((edge, i) => {
-        console.log(`       Transaction ${i + 1}:`);
-        edge.node.tags.forEach((tag) => {
-          console.log(`         ${tag.name}: ${tag.value}`);
-        });
-      });
-    } else {
-      console.log("    ❌ No transactions found from this process at all");
-    }
 
     // Now run the original specific query
     const data = await executeGraphQLQuery(query);
@@ -2010,25 +1928,7 @@ async function checkForNewMessages(db, message, signer) {
       }
     `;
 
-    console.log(
-      "    🔍 Checking for ANY transactions with Relay-Response tags..."
-    );
     const tagCheckData = await executeGraphQLQuery(tagCheckQuery);
-
-    if (tagCheckData.data.transactions.edges.length > 0) {
-      console.log(
-        `    📊 Found ${tagCheckData.data.transactions.edges.length} transactions with Relay-Response tags`
-      );
-      console.log("    📋 Sample transaction tags:");
-      tagCheckData.data.transactions.edges.slice(0, 3).forEach((edge, i) => {
-        console.log(`       Transaction ${i + 1}:`);
-        edge.node.tags.forEach((tag) => {
-          console.log(`         ${tag.name}: ${tag.value}`);
-        });
-      });
-    } else {
-      console.log("    ❌ No transactions found with Relay-Response tags");
-    }
 
     // Reset failure count on success
     if (consecutiveGraphQLFailures > 0) {
@@ -2037,7 +1937,6 @@ async function checkForNewMessages(db, message, signer) {
     }
 
     const transactions = data.data.transactions.edges;
-    console.log(`Found ${transactions.length} transactions from GraphQL query`);
 
     // Count how many match our criteria and find the most recent
     let matchingTransactions = 0;
@@ -2054,44 +1953,29 @@ async function checkForNewMessages(db, message, signer) {
         tags.Method
       ) {
         matchingTransactions++;
-        if (!mostRecentTx || tx.block.height > mostRecentTx.block.height) {
+        if (
+          !mostRecentTx ||
+          (tx.block &&
+            mostRecentTx.block &&
+            tx.block.height > mostRecentTx.block.height)
+        ) {
           mostRecentTx = tx;
           mostRecentTags = tags;
         }
       }
     }
-    console.log(
-      `📊 ${matchingTransactions} transactions match relay criteria (Action=Relay-Response, Status=Success)`
-    );
+    // Found matching transactions
 
     // Show only the most recent transaction info (unless it needs processing)
     if (mostRecentTx && mostRecentTags) {
       const requestTxid = mostRecentTags.Reference;
       if (requestTxid) {
         const alreadyProcessed = await isRequestProcessed(db, requestTxid);
-        if (alreadyProcessed) {
+        if (!alreadyProcessed) {
           console.log(
-            `📋 Most recent: ${mostRecentTx.id.substring(
-              0,
-              8
-            )}... (already processed)`
-          );
-        } else {
-          console.log(
-            `🆕 Most recent: ${mostRecentTx.id.substring(
-              0,
-              8
-            )}... (NEW - will process)`
+            `🆕 New request found: ${mostRecentTx.id.substring(0, 8)}...`
           );
         }
-      } else {
-        console.log(
-          `📋 Most recent: ${mostRecentTx.id.substring(
-            0,
-            8
-          )}... (no Reference tag)`
-        );
-      }
     }
 
     // Process each transaction
@@ -2123,9 +2007,7 @@ async function checkForNewMessages(db, message, signer) {
           continue; // Skip already processed transactions silently
         }
 
-        console.log(`\n🆕 Processing new request: ${tx.id.substring(0, 8)}...`);
-        console.log(`  URL: ${tags.URL}`);
-        console.log(`  Method: ${tags.Method}`);
+        console.log(`\n🆕 Processing request: ${tx.id.substring(0, 8)}... - ${tags.Method} ${tags.URL}`);
 
         // Check if this is a Gus price API request
         if (isGusPriceRequest(tags.URL)) {
@@ -2167,7 +2049,6 @@ async function checkForNewMessages(db, message, signer) {
           // Record the request
           try {
             requestId = await recordRequest(db, requestTxid, tags);
-            console.log(`  Database ID: ${requestId}`);
           } catch (dbError) {
             if (
               dbError.code === "SQLITE_CONSTRAINT" &&
@@ -2183,7 +2064,6 @@ async function checkForNewMessages(db, message, signer) {
           }
 
           // Make the HTTP request
-          console.log(`  Making HTTP request...`);
 
           // Check if body content is in the Data field (for large content)
           let requestBody = "";
@@ -2245,12 +2125,8 @@ async function checkForNewMessages(db, message, signer) {
             tags.Timeout,
             tags["Post-Data"] // Pass Post-Data as additional parameter
           );
-          console.log(
-            `  HTTP request completed. Success: ${axiosResponse.success}`
-          );
 
           // Send response back to the process
-          console.log(`  Sending response back to AO process...`);
 
           // Extract the target process ID from the success message
           const targetProcessId = tags.Requestor;
@@ -2259,23 +2135,20 @@ async function checkForNewMessages(db, message, signer) {
             continue;
           }
 
-          console.log(`  Target: ${targetProcessId.substring(0, 8)}...`);
+          // Target process identified
 
           // Collect X- prefixed custom tags from the success message
           const customTags = [];
           for (const [tagName, tagValue] of Object.entries(tags)) {
             if (tagName.startsWith("X-")) {
               customTags.push({ name: tagName, value: tagValue });
-              console.log(`    Custom tag: ${tagName} = ${tagValue}`);
             }
           }
 
           // Check for Post-Data tag (for POST requests)
           const hasPostData =
             tags["Post-Data"] && tags["Post-Data"].trim() !== "";
-          if (hasPostData) {
-            console.log("    Post-Data found for POST request body");
-          }
+          // Post-Data handling
 
           try {
             const responseResult = await sendResponseToProcess(
@@ -2286,20 +2159,12 @@ async function checkForNewMessages(db, message, signer) {
               targetProcessId,
               customTags
             );
-            console.log(
-              `    📤 Response sent to mock relay: ${responseResult}`
-            );
-            console.log(`    💾 Storing message ID in database...`);
-
             // Update database with response
             await updateRequestWithResponse(
               db,
               requestId,
               responseResult,
               axiosResponse
-            );
-            console.log(
-              `    ✅ Database updated with message ID: ${responseResult}`
             );
 
             console.log(`  ✅ Request processed successfully`);
