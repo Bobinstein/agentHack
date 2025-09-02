@@ -32,27 +32,23 @@ Follow these steps to get your AgentHack assistant up and running:
    cp relay_monitor/.env.example relay_monitor/.env
    ```
 
-2. Edit `relay_monitor/.env` and fill in the following:
+2. Edit `relay_monitor/.env` and update the following **required** fields:
 
    ```env
-   # AO Process IDs (will be filled in step 4)
-   MOCK_RELAY_PROCESS_ID="your-relay-process-id"
-   CRONTROLLER_PROCESS_ID="your-crontroller-process-id"
-
    # API Keys (REQUIRED - update these)
-   BREVO_API_KEY="your-brevo-api-key-here"
-   OPENWEATHER_API_KEY="your-openweather-api-key-here"
+   BREVO_API_KEY=your_brevo_api_key_here
+   OPENWEATHER_API_KEY=your_openweather_api_key_here
 
    # Email Configuration (REQUIRED - update these)
-   EMAIL_TO_ADDRESS="your-email@example.com"
-   EMAIL_TO_NAME="Your Name"
-   EMAIL_SENDER_ADDRESS="sender@example.com"
+   EMAIL_TO_ADDRESS=email@email.com
+   EMAIL_TO_NAME=Stephen
+   EMAIL_SENDER_ADDRESS=emailSender@email.com
 
    # AO Wallet Configuration (update if different)
-   AO_WALLET_PATH="~/.aos.json"
+   AO_WALLET_PATH=~/.aos.json
    ```
 
-   **Important**: Leave all placeholder values (like `wouldnt-you-like-to-know`, `preConfiguredEmailAddress`, etc.) unchanged unless you also modify the corresponding agent code.
+   **Important**: Leave all placeholder values (like `wouldnt-you-like-to-know`, `preConfiguredEmailAddress`, etc.) unchanged unless you also modify the corresponding agent code. The process IDs in the example file are already configured.
 
 ### Step 3: Create AO Processes
 
@@ -80,21 +76,23 @@ Use legacynet for all 3 processes.
    cp utilities/.env.example utilities/.env
    ```
 
-2. Edit `utilities/.env` and fill in:
+2. Edit `utilities/.env` and update with your values:
 
    ```env
-   # AO Process IDs
-   AGENT_PROCESS_ID="your-agent-process-id"
-   RELAY_PROCESS_ID="your-relay-process-id"
-   CRONTROLLER_PROCESS_ID="your-crontroller-process-id"
+   # AO Process IDs (update with your actual process IDs)
+   AGENT_PROCESS_ID = "your-agent-process-id"
+   RELAY_PROCESS_ID = "your-relay-process-id"
+   CRONTROLLER_PROCESS_ID = "your-crontroller-process-id"
 
    # User Configuration
-   USER_WALLET_ADDRESS="your-wallet-address"
-   WALLET_PATH="~/.aos.json"
+   USER_WALLET_ADDRESS = "your-wallet-address"
+   WALLET_PATH = ~/.aos.json
 
    # Weather Configuration
-   WEATHER_LOCATION="New York,NY,US"
+   WEATHER_LOCATION = New York, NY
    ```
+
+   **Note**: The example file contains real process IDs that should be replaced with your own.
 
 ### Step 6: Install Dependencies
 
@@ -139,7 +137,7 @@ This script will initialize your agent with basic configuration.
 1. Copy the frontend environment template:
 
    ```bash
-   cp front_end/.env.example front_end/.env
+   cp front_end/env.example front_end/.env
    ```
 
 2. Edit `front_end/.env` and fill in:
@@ -206,33 +204,40 @@ agentHack/
 
 **Required Updates:**
 
-- `MOCK_RELAY_PROCESS_ID`: Your relay process ID
-- `CRONTROLLER_PROCESS_ID`: Your crontroller process ID
-- `BREVO_API_KEY`: Brevo email service API key
-- `OPENWEATHER_API_KEY`: OpenWeather API key
-- `EMAIL_TO_ADDRESS`: Your email address
-- `EMAIL_TO_NAME`: Your name
-- `EMAIL_SENDER_ADDRESS`: Sender email address
+- `BREVO_API_KEY`: Brevo email service API key (replace `your_brevo_api_key_here`)
+- `OPENWEATHER_API_KEY`: OpenWeather API key (replace `your_openweather_api_key_here`)
+- `EMAIL_TO_ADDRESS`: Your email address (replace `email@email.com`)
+- `EMAIL_TO_NAME`: Your name (replace `Stephen`)
+- `EMAIL_SENDER_ADDRESS`: Sender email address (replace `emailSender@email.com`)
 
 **Optional Updates:**
 
 - `AO_WALLET_PATH`: Path to your AO wallet file (if different from `~/.aos.json`)
+- `MOCK_RELAY_PROCESS_ID`: Your relay process ID (if different from example)
+- `CRONTROLLER_PROCESS_ID`: Your crontroller process ID (if different from example)
 
 **Do NOT Change (unless modifying agent code):**
 
 - All placeholder values (e.g., `wouldnt-you-like-to-know`, `preConfiguredEmailAddress`, etc.)
-- Timing configuration values
-- Gus price API configuration
-- AO Network configuration URLs
+- Timing configuration values (`CHECK_INTERVAL`, `GRAPHQL_FAILURE_DELAY`, etc.)
+- Gus price API configuration (`GUS_PRICE_REQUIRED_BEARER_TOKEN`, `VENTO_RETRY_LIMIT`, etc.)
+- AO Network configuration URLs (`GATEWAY_URL`, `MU_URL`, `CU_URL`)
 
 #### Utilities (.env)
 
-- `AGENT_PROCESS_ID`: Your agent process ID
-- `RELAY_PROCESS_ID`: Your relay process ID
-- `CRONTROLLER_PROCESS_ID`: Your crontroller process ID
-- `USER_WALLET_ADDRESS`: Your wallet address
-- `WALLET_PATH`: Path to your wallet file
-- `WEATHER_LOCATION`: Your location for weather updates
+**Required Updates:**
+
+- `AGENT_PROCESS_ID`: Your agent process ID (replace example value)
+- `RELAY_PROCESS_ID`: Your relay process ID (replace example value)
+- `CRONTROLLER_PROCESS_ID`: Your crontroller process ID (replace example value)
+- `USER_WALLET_ADDRESS`: Your wallet address (replace example value)
+
+**Optional Updates:**
+
+- `WALLET_PATH`: Path to your wallet file (if different from `~/.aos.json`)
+- `WEATHER_LOCATION`: Your location for weather updates (if different from `New York, NY`)
+
+**Note**: The example file contains real process IDs that should be replaced with your own.
 
 #### Frontend (.env)
 
@@ -240,30 +245,8 @@ agentHack/
 - `VITE_RELAY_PROCESS_ID`: Your relay process ID
 - `VITE_CRONTROLLER_PROCESS_ID`: Your crontroller process ID
 
-## 🚨 Troubleshooting
-
-### Common Issues
-
-1. **Process IDs not working**: Ensure all process IDs are correctly copied and pasted
-2. **API keys not working**: Verify your API keys are valid and have proper permissions
-3. **Relay monitor not starting**: Check that all environment variables are set
-4. **Frontend not connecting**: Ensure the relay monitor is running and process IDs are correct
-
-### Getting Help
-
-- Check the console output for error messages
-- Verify all environment variables are set correctly
-- Ensure your AO wallet has sufficient credits
-- Check that all processes are running and accessible
-
 ## 📝 License
 
 This project is licensed under the GNU Affero General Public License v3.0. See the LICENSE file for details.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit issues and pull requests.
-
----
 
 **Note**: This setup process may take some time, especially for the initial data processing. Be patient and ensure all services are running properly before testing functionality.

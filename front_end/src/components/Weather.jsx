@@ -232,8 +232,29 @@ const Weather = ({ weatherData }) => {
     let currentForecast = null;
 
     lines.forEach((line, index) => {
-      // Look for date lines like "**September 2, 2025**"
-      const dateMatch = line.match(/\*\*(.*?)\*\*/);
+      const trimmedLine = line.trim();
+
+      // Skip empty lines
+      if (!trimmedLine) return;
+
+      // Look for various date patterns:
+      // 1. "**September 2, 2025**"
+      // 2. "**Day 1:**" or "**Day 2:**"
+      // 3. "**Monday, September 2**"
+      // 4. "**September 2**"
+      const datePatterns = [
+        /\*\*(.*?)\*\*/, // Any text between **
+        /^Day\s+\d+:/i, // "Day 1:", "Day 2:", etc.
+        /^[A-Za-z]+day,?\s+[A-Za-z]+\s+\d+/i, // "Monday, September 2"
+        /^[A-Za-z]+\s+\d+/i, // "September 2"
+      ];
+
+      let dateMatch = null;
+      for (const pattern of datePatterns) {
+        dateMatch = trimmedLine.match(pattern);
+        if (dateMatch) break;
+      }
+
       if (dateMatch) {
         // If we have a previous forecast, save it
         if (currentForecast) {
@@ -241,38 +262,105 @@ const Weather = ({ weatherData }) => {
         }
         // Start a new forecast
         currentForecast = {
-          date: dateMatch[1].trim(),
+          date: dateMatch[1] ? dateMatch[1].trim() : dateMatch[0].trim(),
           high: null,
           low: null,
           conditions: "Unknown",
         };
-        console.log("Found date:", dateMatch[1].trim());
+        console.log("Found date:", currentForecast.date);
       }
 
-      // Look for high temperature lines like "- High: 296.52 K"
-      const highMatch = line.match(/- High:\s*([\d.]+)\s*K/);
-      if (highMatch && currentForecast) {
-        currentForecast.high = parseFloat(highMatch[1]);
-        console.log("Found high temp:", highMatch[1]);
+      // Look for temperature patterns:
+      // 1. "- High: 296.52 K"
+      // 2. "High: 296.52 K"
+      // 3. "High: 296.52°K"
+      // 4. "High temperature: 296.52 K"
+      const highPatterns = [
+        /-?\s*High:?\s*([\d.]+)\s*[°]?K/i,
+        /-?\s*High\s+temperature:?\s*([\d.]+)\s*[°]?K/i,
+        /-?\s*Maximum:?\s*([\d.]+)\s*[°]?K/i,
+      ];
+
+      const lowPatterns = [
+        /-?\s*Low:?\s*([\d.]+)\s*[°]?K/i,
+        /-?\s*Low\s+temperature:?\s*([\d.]+)\s*[°]?K/i,
+        /-?\s*Minimum:?\s*([\d.]+)\s*[°]?K/i,
+      ];
+
+      // Check for high temperature
+      for (const pattern of highPatterns) {
+        const highMatch = trimmedLine.match(pattern);
+        if (highMatch && currentForecast) {
+          currentForecast.high = parseFloat(highMatch[1]);
+          console.log("Found high temp:", highMatch[1]);
+          break;
+        }
       }
 
-      // Look for low temperature lines like "- Low: 288.63 K"
-      const lowMatch = line.match(/- Low:\s*([\d.]+)\s*K/);
-      if (lowMatch && currentForecast) {
-        currentForecast.low = parseFloat(lowMatch[1]);
-        console.log("Found low temp:", lowMatch[1]);
+      // Check for low temperature
+      for (const pattern of lowPatterns) {
+        const lowMatch = trimmedLine.match(pattern);
+        if (lowMatch && currentForecast) {
+          currentForecast.low = parseFloat(lowMatch[1]);
+          console.log("Found low temp:", lowMatch[1]);
+          break;
+        }
       }
 
-      // Look for conditions lines like "- Conditions: Partly cloudy with clear spells"
-      const conditionsMatch = line.match(/- Conditions:\s*(.*?)(?=\n|$)/);
-      if (conditionsMatch && currentForecast) {
-        currentForecast.conditions = conditionsMatch[1].trim();
-        console.log("Found conditions:", conditionsMatch[1].trim());
+      // Look for conditions patterns:
+      // 1. "- Conditions: Partly cloudy with clear spells"
+      // 2. "Conditions: Partly cloudy"
+      // 3. "Weather: Partly cloudy"
+      // 4. "Partly cloudy" (standalone)
+      const conditionsPatterns = [
+        /-?\s*Conditions?:?\s*(.+)/i,
+        /-?\s*Weather:?\s*(.+)/i,
+        /-?\s*Forecast:?\s*(.+)/i,
+      ];
+
+      // Check for conditions
+      for (const pattern of conditionsPatterns) {
+        const conditionsMatch = trimmedLine.match(pattern);
+        if (conditionsMatch && currentForecast) {
+          currentForecast.conditions = conditionsMatch[1].trim();
+          console.log("Found conditions:", conditionsMatch[1].trim());
+          break;
+        }
+      }
+
+      // If no specific pattern matches but we have a current forecast and this line contains weather-related words
+      if (
+        currentForecast &&
+        !dateMatch &&
+        !trimmedLine.match(/High|Low|Conditions|Weather|Forecast/i)
+      ) {
+        // Check if this might be a standalone conditions line
+        const weatherWords = [
+          "cloudy",
+          "clear",
+          "sunny",
+          "rainy",
+          "snow",
+          "fog",
+          "wind",
+          "storm",
+          "partly",
+          "mostly",
+          "overcast",
+        ];
+        const hasWeatherWords = weatherWords.some((word) =>
+          trimmedLine.toLowerCase().includes(word)
+        );
+
+        if (hasWeatherWords && currentForecast.conditions === "Unknown") {
+          currentForecast.conditions = trimmedLine;
+          console.log("Found standalone conditions:", trimmedLine);
+        }
       }
     });
 
     // Don't forget the last forecast
-    if (currentForecast && currentForecast.high && currentForecast.low) {
+    if (currentForecast) {
       forecasts.push(currentForecast);
     }
 
@@ -346,7 +434,6 @@ const Weather = ({ weatherData }) => {
             </div>
           ) : currentData ? (
             <>
-
               <div className="current-weather-main-content">
                 <div className="weather-main">
                   <div className="weather-icon">🌤️</div>
