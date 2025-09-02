@@ -47,11 +47,16 @@ local crons = {
     ["set-hourly-weather"] = {
         ["Interval"] = 1000 * 60 * 60,
         ["Action"] = "set-hourly-weather",
+        ["XTags"] = {
+            ["X-Request-Type"] = "hourly",
+        }
     },
 
     ["set-daily-weather"] = {
         ["Interval"] = 1000 * 60 * 60 * 24,
         ["Action"] = "set-daily-weather",
+        ["XTags"] = {
+            ["X-Request-Type"] = "daily",
     },
     ["cron-request-csvs"] = {
         ["Interval"] = 1000 * 60 * 60 * 12,
