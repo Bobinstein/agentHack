@@ -9,6 +9,10 @@
   },
   "dependencies": {
     "@permaweb/aoconnect": "^0.0.89",
-    "dotenv": "^17.2.1"
+    "@vela-ventures/vento-sdk": "^1.1.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.6.1",
+    "ethers": "^6.15.0",
+    "sqlite3": "^5.1.6"
   }
 }
