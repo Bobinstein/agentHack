@@ -129,7 +129,7 @@ Handlers.add(
                 end
 
                 local relayRequest = {
-                    Target = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY",
+                    Target = RelayProcessId,
                     Action = "Relay-Request",
                     ["Request-URL"] = fullUrl,
                     Method = fetchConfig.method,

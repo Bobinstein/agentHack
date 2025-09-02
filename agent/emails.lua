@@ -186,7 +186,7 @@ Handlers.add("cron-daily-email",
         -- print(msg)
 
         local messageToSend = {
-            Target = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY",
+            Target = RelayProcessId,
             Action = "Relay-Request",
             ["Request-URL"] = "https://api.brevo.com/v3/smtp/email",
             Method = "POST",

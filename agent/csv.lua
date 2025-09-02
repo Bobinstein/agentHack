@@ -162,7 +162,7 @@ query {
     -- Send AO Distribution CSV Request
     print("📊 Requesting AO distribution CSV...")
     ao.send({
-      Target = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY",
+      Target = RelayProcessId,
       Action = "Relay-Request",
       ["Request-URL"] = "https://arweave.net/graphql",
       Method = "POST",
@@ -182,7 +182,7 @@ query {
     -- Send PI Distribution CSV Request
     print("🥧 Requesting PI distribution CSV...")
     ao.send({
-      Target = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY",
+      Target = RelayProcessId,
       Action = "Relay-Request",
       ["Request-URL"] = "https://arweave.net/graphql",
       Method = "POST",

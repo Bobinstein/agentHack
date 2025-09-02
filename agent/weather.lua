@@ -190,7 +190,7 @@ function fetchWeatherData(location, prompt, customTags)
 
     -- Create relay request
     ao.send({
-        Target = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY", -- Mock relay process ID
+        Target = RelayProcessId, -- Mock relay process ID
         Action = "Relay-Request",
         ["Request-URL"] = url,
         Method = "POST",
@@ -278,7 +278,7 @@ Handlers.add("set-weather-forecast",
 
         -- Always send relay request to update cache
         ao.send({
-            Target = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY", -- Mock relay process ID
+            Target = RelayProcessId, -- Mock relay process ID
             Action = "Relay-Request",
             ["Request-URL"] = WEATHER_API_BASE .. "/assistant/session",
             Method = "POST",
@@ -378,7 +378,7 @@ Handlers.add("set-hourly-weather",
 
         -- Always send relay request to update cache
         ao.send({
-            Target = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY", -- Mock relay process ID
+            Target = RelayProcessId, -- Mock relay process ID
             Action = "Relay-Request",
             ["Request-URL"] = WEATHER_API_BASE .. "/assistant/session",
             Method = "POST",
@@ -478,7 +478,7 @@ Handlers.add("set-daily-weather",
 
         -- Always send relay request to update cache
         ao.send({
-            Target = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY", -- Mock relay process ID
+            Target = RelayProcessId, -- Mock relay process ID
             Action = "Relay-Request",
             ["Request-URL"] = WEATHER_API_BASE .. "/assistant/session",
             Method = "POST",
@@ -637,7 +637,7 @@ Handlers.add("fetch-daily-weather-auto",
 
 --         -- Always send relay request to update cache
 --         ao.send({
---             Target = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY", -- Mock relay process ID
+--             Target = RelayProcessId, -- Mock relay process ID
 --             Action = "Relay-Request",
 --             ["Request-URL"] = WEATHER_API_BASE .. "/assistant/session",
 --             Method = "POST",

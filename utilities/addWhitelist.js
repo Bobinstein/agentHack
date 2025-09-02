@@ -47,4 +47,4 @@ async function main() {
 
 main();
 
-// send({Target = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY", Action = "Relay-Request", ["Request-URL"] = "https://bobinstein.com/ar-io/info"})
+// send({Target = RelayProcessId, Action = "Relay-Request", ["Request-URL"] = "https://bobinstein.com/ar-io/info"})

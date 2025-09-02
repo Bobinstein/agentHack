@@ -25,6 +25,17 @@ require("csv")
 require("tokens")
 require("notes")
 
+
+RelayProcessId = RelayProcessId or ""
+
+Handlers.add("set-relay-process-id",
+    Handlers.utils.hasMatchingTag("Action", "set-relay-process-id"),
+    function(msg)
+        RelayProcessId = msg.Tags["Relay-Process-Id"]
+        print("✅ Relay process ID set to: " .. RelayProcessId)
+    end
+)
+
 -- Store chunked relay responses temporarily with dedicated tracking
 local chunkedRelayResponses = {}
 
@@ -56,7 +67,7 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
 
     -- Handle CSV distribution request handlers (consolidated logic)
     local csvRequestTypes = {
-        ["ao-distribution-csv-request"] = { tokenType = "AO", relayId = "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY" },
+        ["ao-distribution-csv-request"] = { tokenType = "AO", relayId = RelayProcessId },
         ["pi-distribution-csv-request"] = { tokenType = "PI", relayId = "L7ZEASGMlsjY2AMpTwbX178slBjaHJJxznWN8oywiZY" }
     }
 
@@ -183,7 +194,7 @@ local function relayResultAction(msg, requestId, status, httpStatus, httpStatusT
 
                     -- Determine token type from request type
                     local tokenType = (csvRequestType == "ao-distribution-csv") and "AO" or "PI"
-                    local relayId = (tokenType == "AO") and "L7ZEASGMlsjY2AMpTwbX178slBpaHJJxznWN8oywiZY" or
+                    local relayId = (tokenType == "AO") and RelayProcessId or
                         "L7ZEASGMlsjY2AMpTwbX178slBjaHJJxznWN8oywiZY"
 
                     -- Make relay request to fetch the actual CSV data
