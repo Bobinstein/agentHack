@@ -473,6 +473,51 @@
   font-weight: 500;
 }
 
+/* Raw weather description styles */
+.raw-weather-description {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+
+.raw-weather-description h5 {
+  color: #00ff41;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.3);
+}
+
+.forecast-raw-description {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 255, 65, 0.1);
+}
+
+.forecast-raw-description details {
+  cursor: pointer;
+}
+
+.forecast-raw-description summary {
+  color: rgba(0, 255, 65, 0.8);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.25rem 0;
+  outline: none;
+}
+
+.forecast-raw-description summary:hover {
+  color: #00ff41;
+}
+
+.forecast-raw-description .description-text {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
 /* Forecast content container - no additional styles needed */
 
 .weather-details .weather-time {

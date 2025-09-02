@@ -147,22 +147,39 @@ const Weather = ({ weatherData }) => {
     console.log("All lines in description:", lines);
 
     for (const line of lines) {
-      const hourMatch = line.match(
-        /- \*\*(\d{2}:\d{2})\*\* - Temperature: ([\d.]+) K, Condition: ([^,\n]+)/
-      );
+      // Try multiple patterns to match different AI response formats
+      const patterns = [
+        // Pattern 1: "- **03:00** - Temperature: 293.19 K, Condition: Scattered clouds"
+        /- \*\*(\d{2}:\d{2})\*\* - Temperature: ([\d.]+) K, Condition: ([^,\n]+)/,
+        // Pattern 2: "**4 PM**: 296.82 K - Few clouds"
+        /\*\*(\d{1,2} (?:AM|PM))\*\*: ([\d.]+) K - ([^,\n]+)/,
+        // Pattern 3: "**12 PM**: 293.98 K - Few clouds"
+        /\*\*(\d{1,2}:\d{2} (?:AM|PM))\*\*: ([\d.]+) K - ([^,\n]+)/,
+        // Pattern 4: "**6 AM**: 292.35 K - Clear sky"
+        /\*\*(\d{1,2} (?:AM|PM))\*\*: ([\d.]+) K - ([^,\n]+)/,
+        // Pattern 5: More flexible time format
+        /\*\*([^*]+)\*\*: ([\d.]+) K - ([^,\n]+)/,
+      ];
 
-      if (hourMatch) {
-        console.log("Found hourly weather data:", hourMatch);
-        const conditions = hourMatch[3].trim();
-        console.log("Extracted conditions:", conditions);
-        return {
-          temperature: parseFloat(hourMatch[2]),
-          conditions: conditions,
-          time: hourMatch[1],
-          humidity: null, // Not available in hourly format
-          windSpeed: null, // Not available in hourly format
-          windDirection: null, // Not available in hourly format
-        };
+      for (const pattern of patterns) {
+        const match = line.match(pattern);
+        if (match) {
+          console.log(
+            "Found hourly weather data with pattern:",
+            pattern,
+            match
+          );
+          const conditions = match[3].trim();
+          console.log("Extracted conditions:", conditions);
+          return {
+            temperature: parseFloat(match[2]),
+            conditions: conditions,
+            time: match[1],
+            humidity: null, // Not available in hourly format
+            windSpeed: null, // Not available in hourly format
+            windDirection: null, // Not available in hourly format
+          };
+        }
       }
     }
 
@@ -187,7 +204,18 @@ const Weather = ({ weatherData }) => {
     }
 
     console.log("No weather data could be parsed from description");
-    return null;
+
+    // Fallback: return a basic structure with the raw description
+    // This ensures something is always displayed when data exists
+    return {
+      temperature: null,
+      conditions: "See description below",
+      time: null,
+      humidity: null,
+      windSpeed: null,
+      windDirection: null,
+      rawDescription: description, // Include the raw description for display
+    };
   };
 
   const parseDailyForecast = (description) => {
@@ -246,6 +274,21 @@ const Weather = ({ weatherData }) => {
     }
 
     console.log("Parsed forecasts:", forecasts);
+
+    // If no forecasts were parsed, return a fallback with the raw description
+    if (forecasts.length === 0) {
+      console.log("No daily forecasts could be parsed, returning fallback");
+      return [
+        {
+          date: "Current",
+          high: null,
+          low: null,
+          conditions: "See description below",
+          rawDescription: description,
+        },
+      ];
+    }
+
     return forecasts;
   };
 
@@ -297,7 +340,13 @@ const Weather = ({ weatherData }) => {
               <div className="weather-main">
                 <div className="weather-icon">🌤️</div>
                 <div className="weather-details">
-                  <div className="temperature">{currentData.temperature} K</div>
+                  {currentData.temperature ? (
+                    <div className="temperature">
+                      {currentData.temperature} K
+                    </div>
+                  ) : (
+                    <div className="temperature">-- K</div>
+                  )}
                   <div className="conditions">
                     {currentData.conditions || "Unknown conditions"}
                   </div>
@@ -337,6 +386,15 @@ const Weather = ({ weatherData }) => {
                   </div>
                 )}
               </div>
+              {/* Show raw description when parsing fails */}
+              {currentData.rawDescription && (
+                <div className="raw-weather-description">
+                  <h5>Raw Weather Data:</h5>
+                  <div className="description-text">
+                    {currentData.rawDescription}
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <div className="weather-loading">
@@ -378,12 +436,31 @@ const Weather = ({ weatherData }) => {
                       </div>
                     </div>
                     <div className="forecast-temps">
-                      <div className="temp-high">High: {forecast.high} K</div>
-                      <div className="temp-low">Low: {forecast.low} K</div>
+                      {forecast.high ? (
+                        <div className="temp-high">High: {forecast.high} K</div>
+                      ) : (
+                        <div className="temp-high">High: -- K</div>
+                      )}
+                      {forecast.low ? (
+                        <div className="temp-low">Low: {forecast.low} K</div>
+                      ) : (
+                        <div className="temp-low">Low: -- K</div>
+                      )}
                     </div>
                     <div className="forecast-conditions">
                       {forecast.conditions}
                     </div>
+                    {/* Show raw description for this forecast if parsing failed */}
+                    {forecast.rawDescription && (
+                      <div className="forecast-raw-description">
+                        <details>
+                          <summary>Raw Data</summary>
+                          <div className="description-text">
+                            {forecast.rawDescription}
+                          </div>
+                        </details>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
