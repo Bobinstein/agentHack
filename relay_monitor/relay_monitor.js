@@ -1976,6 +1976,7 @@ async function checkForNewMessages(db, message, signer) {
             `🆕 New request found: ${mostRecentTx.id.substring(0, 8)}...`
           );
         }
+      }
     }
 
     // Process each transaction
@@ -2007,7 +2008,11 @@ async function checkForNewMessages(db, message, signer) {
           continue; // Skip already processed transactions silently
         }
 
-        console.log(`\n🆕 Processing request: ${tx.id.substring(0, 8)}... - ${tags.Method} ${tags.URL}`);
+        console.log(
+          `\n🆕 Processing request: ${tx.id.substring(0, 8)}... - ${
+            tags.Method
+          } ${tags.URL}`
+        );
 
         // Check if this is a Gus price API request
         if (isGusPriceRequest(tags.URL)) {
