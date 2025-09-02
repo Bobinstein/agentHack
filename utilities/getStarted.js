@@ -76,7 +76,7 @@ async function initializeAgent() {
           `✅ Agent added to relay whitelist: ${agentWhitelistTxId}`
         );
 
-    // 2. Set crontroller process ID in the agent
+    // 2. Set crontroller process ID and relay process ID in the agent
     console.log("\n⏰ Setting crontroller process ID in agent...");
     const crontrollerTxId = await message({
       process: agentProcessId,
@@ -88,6 +88,18 @@ async function initializeAgent() {
       data: "Setting crontroller process ID",
     });
     console.log(`✅ Crontroller process ID set: ${crontrollerTxId}`);
+
+    const relayTxId = await message({
+      process: agentProcessId,
+      tags: [
+        { name: "Action", value: "set-relay-process-id" },
+        { name: "Relay-Process-Id", value: relayProcessId },
+      ],
+      signer: createDataItemSigner(jwk),
+      data: "Setting relay process ID",
+    });
+    
+    console.log(`✅ Relay process ID set: ${relayTxId}`);
 
     // 3. Set weather location on the agent process
     console.log("\n🌤️ Setting up weather location...");
